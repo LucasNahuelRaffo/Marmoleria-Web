@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marmolería</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #0B0B0F;
+      color: #F5F0E6;
+      font-family: 'Figtree', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0B0B0F; }
+    ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+    /* Noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
+    }
+
+    #root { position: relative; z-index: 1; }
+
+    /* Dividers between sections */
+    .section-divider {
+      width: 60px; height: 1px;
+      background: linear-gradient(to right, #D4AF37, transparent);
+      margin: 0 auto 48px;
+    }
+
+    /* Scroll hint animation */
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.2; transform: scaleY(0.6); }
+      50% { opacity: 0.5; transform: scaleY(1); }
+    }
+
+    /* Mesa fadein animation */
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Input placeholder color */
+    ::placeholder { color: rgba(245,240,230,0.25); }
+    input, textarea, select { color-scheme: dark; }
+
+    /* About section responsive */
+    @media (max-width: 900px) {
+      #about-grid { grid-template-columns: 1fr !important; }
+      #hero-cards { grid-template-columns: repeat(2, 1fr) !important; }
+      #footer-grid { grid-template-columns: 1fr 1fr !important; }
+    }
+    @media (max-width: 600px) {
+      #hero-cards { grid-template-columns: 1fr !important; }
+      #footer-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body style="background-color: rgb(255, 255, 255)">
+  <div id="root"></div>
+
+  <!-- Data -->
+  <script src="components/data.js"></script>
+
+  <!-- Components (Babel JSX) -->
+  <script type="text/babel" src="components/Navbar.jsx"></script>
+  <script type="text/babel" src="components/HeroSection.jsx"></script>
+  <script type="text/babel" src="components/AboutSection.jsx"></script>
+  <script type="text/babel" src="components/InfoSections.jsx"></script>
+  <script type="text/babel" src="components/CotizadorModal.jsx"></script>
+  <script type="text/babel" src="components/InfoModal.jsx"></script>
+  <script type="text/babel" src="components/Footer.jsx"></script>
+
+  <!-- App -->
+  <script type="text/babel" src="App.jsx"></script>
+</body>
+</html>
