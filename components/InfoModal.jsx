@@ -1,6 +1,14 @@
-const { useEffect } = React;
+const { useState, useEffect } = React;
 
 function InfoModal({ section, onClose, onCotizar }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -16,7 +24,7 @@ function InfoModal({ section, onClose, onCotizar }) {
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '20px',
+        padding: isMobile ? '12px' : '20px',
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -27,17 +35,28 @@ function InfoModal({ section, onClose, onCotizar }) {
         border: '1px solid rgba(255,255,255,0.14)',
         borderRadius: '28px',
         width: '100%', maxWidth: '960px',
-        maxHeight: '88vh', display: 'flex', overflow: 'hidden',
+        maxHeight: isMobile ? '92vh' : '88vh',
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        overflow: isMobile ? 'auto' : 'hidden',
         boxShadow: '0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)',
       }}>
         {/* Left — image */}
-        <div style={{ flex: '0 0 46%', position: 'relative', overflow: 'hidden', borderRadius: '28px 0 0 28px' }}>
+        <div style={{ 
+          flex: isMobile ? 'none' : '0 0 46%', 
+          height: isMobile ? '180px' : 'auto',
+          position: 'relative', 
+          overflow: 'hidden', 
+          borderRadius: isMobile ? '28px 28px 0 0' : '28px 0 0 28px' 
+        }}>
           <img src={section.img} alt={section.title} style={{
             width: '100%', height: '100%', objectFit: 'cover', display: 'block',
           }} />
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to right, transparent 55%, rgba(14,11,7,0.7) 100%)',
+            background: isMobile ? 
+              'linear-gradient(to bottom, transparent 40%, rgba(14,11,7,0.7) 100%)' :
+              'linear-gradient(to right, transparent 55%, rgba(14,11,7,0.7) 100%)',
           }} />
           {/* Bottom gold line */}
           <div style={{
@@ -48,10 +67,13 @@ function InfoModal({ section, onClose, onCotizar }) {
 
         {/* Right — info */}
         <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column',
-          padding: '36px 36px 32px',
-          borderLeft: '1px solid rgba(255,255,255,0.07)',
-          overflow: 'auto',
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column',
+          padding: isMobile ? '22px 20px 24px' : '36px 36px 32px',
+          borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
+          borderTop: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none',
+          overflow: isMobile ? 'visible' : 'auto',
         }}>
           {/* Header row */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
@@ -78,7 +100,7 @@ function InfoModal({ section, onClose, onCotizar }) {
 
           <h2 style={{
             fontFamily: "'Figtree', sans-serif",
-            fontSize: 'clamp(28px, 3vw, 42px)',
+            fontSize: isMobile ? '26px' : 'clamp(28px, 3vw, 42px)',
             fontWeight: 700, color: '#F5F0E6',
             letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '8px',
           }}>{section.title}</h2>
@@ -118,17 +140,18 @@ function InfoModal({ section, onClose, onCotizar }) {
               fontFamily: "'Figtree', sans-serif",
               fontSize: '14px', fontWeight: 600,
               letterSpacing: '0.02em',
-              alignSelf: 'flex-start',
+              alignSelf: isMobile ? 'stretch' : 'flex-start',
+              textAlign: 'center',
               boxShadow: '0 6px 20px rgba(212,175,55,0.3)',
               transition: 'background 0.2s, transform 0.15s, box-shadow 0.2s',
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#e8c44a';
-              e.currentTarget.style.transform = 'translateY(-2px)';
+              if (!isMobile) e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={e => {
               e.currentTarget.style.background = '#D4AF37';
-              e.currentTarget.style.transform = 'translateY(0)';
+              if (!isMobile) e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
             Cotizar este servicio →

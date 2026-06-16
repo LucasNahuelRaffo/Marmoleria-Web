@@ -1,4 +1,4 @@
-const { useState } = React;
+const { useState, useEffect, useRef } = React;
 
 const CARD_FEATURES = {
   marmoleria: ['Mármoles importados', 'Granitos nacionales', 'Purastone y Purastone Prima'],
@@ -101,17 +101,21 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
         <button
           onClick={(e) => { e.stopPropagation(); onVerMasClick(card.sectionId); }}
           style={{
-            background: 'none', border: 'none', padding: 0,
-            cursor: 'pointer', color: '#F5F0E6',
+            background: 'rgba(212,175,55,0.12)',
+            border: '1px solid rgba(212,175,55,0.4)',
+            borderRadius: '50px',
+            padding: '10px 20px',
+            cursor: 'pointer', color: '#D4AF37',
             fontFamily: "'Figtree', sans-serif",
             fontSize: '12px', fontWeight: 600,
-            letterSpacing: '0.1em', textTransform: 'uppercase',
+            letterSpacing: '0.08em', textTransform: 'uppercase',
             display: 'flex', alignItems: 'center', gap: '6px',
-            transition: 'gap 0.2s', alignSelf: 'flex-start',
+            transition: 'background 0.2s, gap 0.2s', alignSelf: 'stretch',
+            justifyContent: 'center',
           }}
-          onMouseEnter={(e) => e.currentTarget.style.gap = '10px'}
-          onMouseLeave={(e) => e.currentTarget.style.gap = '6px'}>
-          Ver más <span style={{ fontSize: '14px' }}>›</span>
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.22)'; e.currentTarget.style.gap = '10px'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(212,175,55,0.12)'; e.currentTarget.style.gap = '6px'; }}>
+          Ver detalles <span style={{ fontSize: '14px' }}>→</span>
         </button>
       </div>
     </div>
@@ -119,6 +123,38 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
 }
 
 function HeroSection({ onCardClick, onVerMasClick }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const touchStartX = useRef(null);
+  const total = window.HERO_CARDS_DATA.length;
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      gsap.killTweensOf('.hero-mobile-slide');
+      gsap.fromTo(`.hero-mobile-slide.slide-${activeIndex}`,
+        { opacity: 0, scale: 0.96, y: 12 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+      );
+    }
+  }, [activeIndex, isMobile]);
+
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 40) {
+      if (delta > 0) setActiveIndex(prev => (prev + 1) % total);
+      else setActiveIndex(prev => (prev - 1 + total) % total);
+    }
+    touchStartX.current = null;
+  };
+
   return (
     <section id="hero" style={{
       position: 'relative',
@@ -126,11 +162,30 @@ function HeroSection({ onCardClick, onVerMasClick }) {
       display: 'flex', flexDirection: 'column',
       overflow: 'hidden',
     }}>
+      {/* Fallback Main Background */}
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: 'url(images/hero-bg.png)',
         backgroundSize: 'cover', backgroundPosition: 'center',
       }} />
+
+      {/* Dynamic Slide Background (Only on mobile to fit the active card content) */}
+      {isMobile && window.HERO_CARDS_DATA.map((card, idx) => (
+        <div
+          key={card.id + '-bg'}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${card.img})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: activeIndex === idx ? 0.35 : 0,
+            transition: 'opacity 0.6s ease',
+          }}
+        />
+      ))}
+
+      {/* Overlays */}
       <div style={{
         position: 'absolute', inset: 0,
         background: 'linear-gradient(170deg, rgba(8,6,4,0.38) 0%, rgba(8,6,4,0.22) 40%, rgba(8,6,4,0.82) 100%)',
@@ -143,7 +198,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
       <div style={{
         position: 'relative', zIndex: 1,
         flex: 1, display: 'flex', flexDirection: 'column',
-        padding: '0 5.5%',
+        padding: isMobile ? '0 4% 32px' : '0 5.5%',
       }}>
         <div style={{ height: '68px', flexShrink: 0 }} />
 
@@ -151,15 +206,15 @@ function HeroSection({ onCardClick, onVerMasClick }) {
         <div style={{
           flex: 1, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          textAlign: 'center', padding: '24px 0 32px',
+          textAlign: 'center', padding: isMobile ? '36px 0 24px' : '24px 0 32px',
         }}>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <h1 style={{
               fontFamily: "'Figtree', sans-serif",
-              fontSize: '76px', fontWeight: 300,
+              fontSize: isMobile ? '38px' : '76px', fontWeight: 300,
               letterSpacing: '-0.02em',
-              color: '#F5F0E6', lineHeight: 1.05,
-              marginBottom: '18px', whiteSpace: 'nowrap',
+              color: '#F5F0E6', lineHeight: 1.1,
+              marginBottom: '18px', whiteSpace: isMobile ? 'normal' : 'nowrap',
               textShadow: '0 2px 40px rgba(0,0,0,0.45)',
             }}>
               Diseñá tu espacio ideal
@@ -168,7 +223,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
 
           <p style={{
             fontFamily: "'Figtree', sans-serif",
-            fontSize: '18px', fontWeight: 400,
+            fontSize: isMobile ? '15px' : '18px', fontWeight: 400,
             color: 'rgba(245,240,230,0.75)',
             letterSpacing: '0.01em', marginBottom: '0',
             maxWidth: '540px', lineHeight: 1.55,
@@ -178,23 +233,138 @@ function HeroSection({ onCardClick, onVerMasClick }) {
           </p>
         </div>
 
-        {/* 4 Glass Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '14px',
-          paddingBottom: '44px',
-          maxWidth: '1280px', margin: '0 auto', width: '100%',
-        }}>
-          {HERO_CARDS_DATA.map((card, i) => (
-            <GlassCard
-              key={card.id}
-              card={card}
-              index={i}
-              onCardClick={onCardClick}
-              onVerMasClick={onVerMasClick} />
-          ))}
-        </div>
+        {/* Cards view */}
+        {isMobile ? (
+          <div className="hero-slider-touch" style={{ display: 'flex', flexDirection: 'column', width: '100%', zIndex: 2 }}>
+            {/* Slider container */}
+            <div
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
+              style={{
+              position: 'relative',
+              height: '430px',
+              width: '100%',
+              maxWidth: '400px',
+              margin: '0 auto',
+            }}>
+              {window.HERO_CARDS_DATA.map((card, i) => (
+                <div
+                  key={card.id}
+                  className={`hero-mobile-slide slide-${i}`}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    opacity: i === activeIndex ? 1 : 0,
+                    pointerEvents: i === activeIndex ? 'auto' : 'none',
+                    display: i === activeIndex ? 'flex' : 'none', // optimize DOM/rendering and clicks
+                    flexDirection: 'column'
+                  }}
+                >
+                  <GlassCard
+                    card={card}
+                    index={i}
+                    onCardClick={onCardClick}
+                    onVerMasClick={onVerMasClick}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Slider Controls */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '24px',
+              marginTop: '20px',
+            }}>
+              <button
+                onClick={() => setActiveIndex(prev => (prev === 0 ? window.HERO_CARDS_DATA.length - 1 : prev - 1))}
+                aria-label="Tarjeta anterior"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  color: '#F5F0E6',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                  padding: 0
+                }}
+              >
+                ‹
+              </button>
+
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                {window.HERO_CARDS_DATA.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveIndex(idx)}
+                    aria-label={`Ir a tarjeta ${idx + 1}`}
+                    style={{
+                      background: activeIndex === idx ? '#D4AF37' : 'rgba(255,255,255,0.2)',
+                      border: 'none',
+                      borderRadius: '50px',
+                      width: activeIndex === idx ? '20px' : '8px',
+                      height: '8px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      padding: 0,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={() => setActiveIndex(prev => (prev === window.HERO_CARDS_DATA.length - 1 ? 0 : prev + 1))}
+                aria-label="Siguiente tarjeta"
+                style={{
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '50%',
+                  width: '40px',
+                  height: '40px',
+                  color: '#F5F0E6',
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'background 0.2s',
+                  padding: 0
+                }}
+              >
+                ›
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* 4 Glass Cards Grid on Desktop */
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '14px',
+            paddingBottom: '44px',
+            maxWidth: '1280px', margin: '0 auto', width: '100%',
+          }}>
+            {window.HERO_CARDS_DATA.map((card, i) => (
+              <GlassCard
+                key={card.id}
+                card={card}
+                index={i}
+                onCardClick={onCardClick}
+                onVerMasClick={onVerMasClick} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,10 +1,18 @@
-const { useState } = React;
+const { useState, useEffect } = React;
 
 function AboutSection() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <section id="about" style={{
       position: 'relative',
-      padding: '120px 5.5%',
+      padding: isMobile ? '60px 4%' : '120px 5.5%',
       overflow: 'hidden'
     }}>
       {/* Bg image very subtle */}
@@ -22,12 +30,19 @@ function AboutSection() {
       <div style={{
         position: 'relative', zIndex: 1,
         maxWidth: '1280px', margin: '0 auto',
-        display: 'grid', gridTemplateColumns: '1fr 1fr',
-        gap: '60px', alignItems: 'center'
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '48px' : '60px',
+        alignItems: 'center'
       }}>
 
         {/* Left — image in glass frame */}
-        <div style={{ position: 'relative', width: '85%', justifySelf: 'center' }}>
+        <div style={{ 
+          position: 'relative', 
+          width: isMobile ? '92%' : '85%', 
+          justifySelf: 'center',
+          marginBottom: isMobile ? '16px' : '0'
+        }}>
           {/* Glass frame behind */}
           <div style={{
             position: 'absolute',
@@ -44,7 +59,7 @@ function AboutSection() {
             boxShadow: '0 24px 64px rgba(0,0,0,0.55)'
           }}>
             <img src="images/familia.jpg" alt="Nuestra familia" style={{
-              width: '100%', aspectRatio: '4/5',
+              width: '100%', aspectRatio: isMobile ? '1.2/1' : '4/5',
               objectFit: 'cover', objectPosition: 'center top',
               display: 'block'
             }} />
@@ -56,17 +71,20 @@ function AboutSection() {
 
           {/* Gold badge */}
           <div style={{
-            position: 'absolute', bottom: '-10px', right: '-10px',
+            position: 'absolute',
+            bottom: isMobile ? '-15px' : '-10px',
+            right: isMobile ? '-5px' : '-10px',
             background: 'linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))',
             backdropFilter: 'blur(20px)',
-
             borderRadius: '20px',
-            padding: '20px 26px', textAlign: 'center',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.4)', border: "1px solid rgba(212, 175, 55, 0.15)"
+            padding: isMobile ? '12px 18px' : '20px 26px',
+            textAlign: 'center',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+            border: "1px solid rgba(212, 175, 55, 0.15)"
           }}>
             <div style={{
               fontFamily: "'Figtree', sans-serif",
-              fontSize: '52px', fontWeight: 700,
+              fontSize: isMobile ? '38px' : '52px', fontWeight: 700,
               lineHeight: 1, color: "#F5F0E6", opacity: "1"
             }}>90+</div>
             <div style={{
@@ -84,7 +102,7 @@ function AboutSection() {
           backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: '28px',
-          padding: '52px 48px',
+          padding: isMobile ? '32px 24px' : '52px 48px',
           boxShadow: '0 8px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)'
         }}>
           <p style={{
@@ -96,8 +114,8 @@ function AboutSection() {
 
           <h2 style={{
             fontFamily: "'Figtree', sans-serif",
-            fontSize: 'clamp(30px, 3.2vw, 48px)',
-            fontWeight: 600, lineHeight: 1.12,
+            fontSize: isMobile ? '28px' : 'clamp(30px, 3.2vw, 48px)',
+            fontWeight: 600, lineHeight: 1.2,
             color: '#F5F0E6', marginBottom: '24px',
             letterSpacing: '-0.02em'
           }}>
@@ -122,7 +140,7 @@ function AboutSection() {
           <p style={{
             fontFamily: "'Figtree', sans-serif",
             fontSize: '15px', lineHeight: 1.8,
-            color: 'rgba(245,240,230,0.62)', marginBottom: '40px'
+            color: 'rgba(245,240,230,0.62)', marginBottom: isMobile ? '32px' : '40px'
           }}>
             Desde mármoles importados hasta soluciones integrales de cocina y baño,
             acompañamos a nuestros clientes con asesoramiento personalizado e instalación profesional.
@@ -136,33 +154,33 @@ function AboutSection() {
             paddingTop: '32px'
           }}>
             {[
-            { num: '500+', label: 'Proyectos' },
-            { num: '90+', label: 'Años' },
-            { num: '100%', label: 'Garantía' }].
-            map((s, i) =>
-            <div key={s.label} style={{
-              textAlign: 'center',
-              borderRight: i < 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-              padding: '0 8px'
-            }}>
+              { num: '500+', label: 'Proyectos' },
+              { num: '90+', label: 'Años' },
+              { num: '100%', label: 'Garantía' }
+            ].map((s, i) => (
+              <div key={s.label} style={{
+                textAlign: 'center',
+                borderRight: i < 2 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                padding: '0 4px'
+              }}>
                 <div style={{
-                fontFamily: "'Figtree', sans-serif",
-                fontSize: '34px', fontWeight: 700,
-                lineHeight: 1,
-                letterSpacing: '-0.02em', color: "rgba(235, 233, 227, 0.87)"
-              }}>{s.num}</div>
+                  fontFamily: "'Figtree', sans-serif",
+                  fontSize: isMobile ? '24px' : '34px', fontWeight: 700,
+                  lineHeight: 1,
+                  letterSpacing: '-0.02em', color: "rgba(235, 233, 227, 0.87)"
+                }}>{s.num}</div>
                 <div style={{
-                fontFamily: "'Figtree', sans-serif",
-                fontSize: '11px', color: 'rgba(245,240,230,0.4)',
-                marginTop: '6px', letterSpacing: '0.06em', textTransform: 'uppercase'
-              }}>{s.label}</div>
+                  fontFamily: "'Figtree', sans-serif",
+                  fontSize: isMobile ? '10px' : '11px', color: 'rgba(245,240,230,0.4)',
+                  marginTop: '6px', letterSpacing: '0.06em', textTransform: 'uppercase'
+                }}>{s.label}</div>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }
 
 Object.assign(window, { AboutSection });

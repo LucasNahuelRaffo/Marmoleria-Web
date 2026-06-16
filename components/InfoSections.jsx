@@ -1,6 +1,6 @@
-const { useState } = React;
+const { useState, useEffect } = React;
 
-function ServiceCard({ section, onInfoClick }) {
+function ServiceCard({ section, onInfoClick, isMobile }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -17,18 +17,18 @@ function ServiceCard({ section, onInfoClick }) {
         border: `1px solid ${hovered ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.12)'}`,
         display: 'flex', flexDirection: 'column',
         transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
-        transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+        transform: hovered && !isMobile ? 'translateY(-6px)' : 'translateY(0)',
         boxShadow: hovered ?
         '0 28px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2)' :
         '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)'
       }}>
       
       {/* Image top */}
-      <div style={{ position: 'relative', height: '240px', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ position: 'relative', height: isMobile ? '190px' : '240px', overflow: 'hidden', flexShrink: 0 }}>
         <img src={section.img} alt={section.title} style={{
           width: '100%', height: '100%', objectFit: 'cover',
           transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
-          transform: hovered ? 'scale(1.07)' : 'scale(1)',
+          transform: hovered && !isMobile ? 'scale(1.07)' : 'scale(1)',
           display: 'block'
         }} />
         <div style={{
@@ -45,7 +45,6 @@ function ServiceCard({ section, onInfoClick }) {
           fontFamily: "'Figtree', sans-serif",
           fontSize: '10px', fontWeight: 600,
           letterSpacing: '0.14em', textTransform: 'uppercase', color: "rgb(255, 255, 255)"
-
         }}>
           {section.id === 'sec-marmoleria' ? 'Materiales' :
           section.id === 'sec-electricidad' ? 'Instalaciones' :
@@ -55,7 +54,7 @@ function ServiceCard({ section, onInfoClick }) {
         <h3 style={{
           position: 'absolute', left: '20px', right: '20px', bottom: '16px',
           fontFamily: "'Figtree', sans-serif",
-          fontSize: '26px', fontWeight: 700,
+          fontSize: isMobile ? '22px' : '26px', fontWeight: 700,
           color: '#F5F0E6', lineHeight: 1.1,
           letterSpacing: '-0.02em',
           textShadow: '0 2px 20px rgba(0,0,0,0.7)'
@@ -63,7 +62,7 @@ function ServiceCard({ section, onInfoClick }) {
       </div>
 
       {/* Body */}
-      <div style={{ padding: '22px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+      <div style={{ padding: isMobile ? '18px 18px 20px' : '22px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <p style={{
           fontFamily: "'Figtree', sans-serif",
           fontSize: '14px', lineHeight: 1.7,
@@ -98,33 +97,64 @@ function ServiceCard({ section, onInfoClick }) {
         </ul>
 
         {/* Footer row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <button
-            onClick={(e) => {e.stopPropagation();onInfoClick(section);}}
-            style={{
-              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: '12px', fontWeight: 600,
-              letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: '#F5F0E6',
-              display: 'flex', alignItems: 'center', gap: '6px',
-              transition: 'gap 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.gap = '10px'}
-            onMouseLeave={(e) => e.currentTarget.style.gap = '6px'}>
-            
-            Ver más <span style={{ fontSize: '14px' }}>›</span>
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+          {isMobile ? (
+            <button
+              onClick={(e) => {e.stopPropagation(); onInfoClick(section);}}
+              style={{
+                width: '100%',
+                background: 'rgba(212,175,55,0.12)',
+                border: '1px solid rgba(212,175,55,0.4)',
+                borderRadius: '50px',
+                padding: '12px 20px',
+                cursor: 'pointer',
+                fontFamily: "'Figtree', sans-serif",
+                fontSize: '13px',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: '#D4AF37',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'background 0.2s, transform 0.15s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.2)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(212,175,55,0.12)'}
+            >
+              Ver detalles <span style={{ fontSize: '14px' }}>→</span>
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={(e) => {e.stopPropagation();onInfoClick(section);}}
+                style={{
+                  background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                  fontFamily: "'Figtree', sans-serif",
+                  fontSize: '12px', fontWeight: 600,
+                  letterSpacing: '0.1em', textTransform: 'uppercase',
+                  color: '#F5F0E6',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  transition: 'gap 0.2s'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.gap = '10px'}
+                onMouseLeave={(e) => e.currentTarget.style.gap = '6px'}>
+                
+                Ver más <span style={{ fontSize: '14px' }}>›</span>
+              </button>
 
-          {/* Arrow circle */}
-          <div style={{
-            width: '34px', height: '34px', borderRadius: '50%',
-            border: `1px solid ${hovered ? 'rgba(212,175,55,0.6)' : 'rgba(255,255,255,0.12)'}`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: hovered ? '#D4AF37' : 'rgba(245,240,230,0.35)',
-            fontSize: '14px',
-            transition: 'border-color 0.25s, color 0.25s'
-          }}>›</div>
+              {/* Arrow circle */}
+              <div style={{
+                width: '34px', height: '34px', borderRadius: '50%',
+                border: `1px solid ${hovered ? 'rgba(212,175,55,0.6)' : 'rgba(255,255,255,0.12)'}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: hovered ? '#D4AF37' : 'rgba(245,240,230,0.35)',
+                fontSize: '14px',
+                transition: 'border-color 0.25s, color 0.25s'
+              }}>›</div>
+            </>
+          )}
         </div>
       </div>
     </div>);
@@ -132,10 +162,18 @@ function ServiceCard({ section, onInfoClick }) {
 }
 
 function InfoSections({ onInfoClick }) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <section style={{
       position: 'relative',
-      padding: '80px 5.5% 120px',
+      padding: isMobile ? '60px 4% 80px' : '80px 5.5% 120px',
       overflow: 'hidden'
     }}>
       {/* Subtle bg */}
@@ -146,7 +184,7 @@ function InfoSections({ onInfoClick }) {
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto' }}>
         {/* Section header */}
-        <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '40px' : '64px' }}>
           <p style={{
             fontFamily: "'Figtree', sans-serif",
             fontSize: '11px', letterSpacing: '0.22em',
@@ -155,21 +193,20 @@ function InfoSections({ onInfoClick }) {
           }}>Lo que hacemos</p>
           <h2 style={{
             fontFamily: "'Figtree', sans-serif",
-
             color: '#F5F0E6',
-            fontWeight: "400", fontSize: "45px", lineHeight: "0.85", letterSpacing: "1px"
+            fontWeight: "400", fontSize: isMobile ? '34px' : '45px', lineHeight: "1.1", letterSpacing: "1px"
           }}>Nuestros servicios</h2>
         </div>
 
-        {/* 2×2 Grid */}
+        {/* 2×2 Grid or 1 Column */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: '18px'
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+          gap: isMobile ? '16px' : '18px'
         }}>
-          {INFO_SECTIONS_DATA.map((section) =>
+          {window.INFO_SECTIONS_DATA.map((section) =>
           <section key={section.id} id={section.id}>
-              <ServiceCard section={section} onInfoClick={onInfoClick} />
+              <ServiceCard section={section} onInfoClick={onInfoClick} isMobile={isMobile} />
             </section>
           )}
         </div>
