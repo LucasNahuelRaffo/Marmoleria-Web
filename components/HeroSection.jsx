@@ -172,21 +172,6 @@ function HeroSection({ onCardClick, onVerMasClick }) {
         backgroundSize: 'cover', backgroundPosition: 'center',
       }} />
 
-      {/* Dynamic Slide Background (Only on mobile to fit the active card content) */}
-      {isMobile && window.HERO_CARDS_DATA.map((card, idx) => (
-        <div
-          key={card.id + '-bg'}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${card.img})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: activeIndex === idx ? 0.35 : 0,
-            transition: 'opacity 0.6s ease',
-          }}
-        />
-      ))}
 
       {/* Overlays */}
       <div style={{
@@ -266,10 +251,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
                     flexDirection: 'column',
                     opacity: i === activeIndex ? 1 : 0,
                     pointerEvents: i === activeIndex ? 'auto' : 'none',
-                    // Promover a capa GPU propia para que backdropFilter
-                    // no se recalcule en cada cambio
-                    willChange: 'opacity, transform',
-                    transform: 'translateZ(0)',
+                    willChange: 'opacity',
                     transition: 'opacity 0.35s ease',
                   }}
                 >
