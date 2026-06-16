@@ -136,10 +136,12 @@ function HeroSection({ onCardClick, onVerMasClick }) {
 
   useEffect(() => {
     if (isMobile) {
-      gsap.killTweensOf('.hero-mobile-slide');
+      // La opacidad la maneja CSS transition (ya pre-computada)
+      // GSAP solo anima scale y y para el efecto de entrada
+      gsap.killTweensOf(`.hero-mobile-slide.slide-${activeIndex}`);
       gsap.fromTo(`.hero-mobile-slide.slide-${activeIndex}`,
-        { opacity: 0, scale: 0.96, y: 12 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+        { scale: 0.96, y: 12 },
+        { scale: 1, y: 0, duration: 0.4, ease: 'power3.out', force3D: true }
       );
     }
   }, [activeIndex, isMobile]);
@@ -257,10 +259,17 @@ function HeroSection({ onCardClick, onVerMasClick }) {
                     left: 0,
                     width: '100%',
                     height: '100%',
+                    // Siempre display:flex — el blur se pre-computa en GPU
+                    // y no hay reflow costoso al cambiar de slide
+                    display: 'flex',
+                    flexDirection: 'column',
                     opacity: i === activeIndex ? 1 : 0,
                     pointerEvents: i === activeIndex ? 'auto' : 'none',
-                    display: i === activeIndex ? 'flex' : 'none', // optimize DOM/rendering and clicks
-                    flexDirection: 'column'
+                    // Promover a capa GPU propia para que backdropFilter
+                    // no se recalcule en cada cambio
+                    willChange: 'opacity, transform',
+                    transform: 'translateZ(0)',
+                    transition: 'opacity 0.35s ease',
                   }}
                 >
                   <GlassCard
