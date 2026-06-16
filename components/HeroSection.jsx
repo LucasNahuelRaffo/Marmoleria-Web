@@ -22,6 +22,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
         background: 'linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.06) 100%)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
+        willChange: 'backdrop-filter',
         border: `1px solid ${hovered ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.16)'}`,
         display: 'flex', flexDirection: 'column',
         transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
