@@ -237,18 +237,26 @@ function CotizadorModal({ context = 'all', onClose }) {
                 background: '#0F0F13'
               }}>
                 {/* Tabs */}
-                <div style={{ display: 'flex', borderBottom: '1px solid rgba(212,175,55,0.1)', flexShrink: 0, overflowX: 'auto' }}>
-                  {tabs.map(tab => (
-                    <button key={tab.key} onClick={() => handleTabChange(tab.key)} style={{
-                      flex: 1, background: 'none', border: 'none',
-                      borderBottom: activeTab === tab.key ? '2px solid #D4AF37' : '2px solid transparent',
-                      color: activeTab === tab.key ? '#D4AF37' : 'rgba(245,240,230,0.45)',
-                      padding: '13px 8px', cursor: 'pointer',
-                      fontFamily: "'Figtree', sans-serif", fontSize: '11px', fontWeight: 500,
-                      letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap',
-                      transition: 'color 0.2s',
-                    }}>{tab.label}</button>
-                  ))}
+                <div style={{
+                  display: 'flex', flexWrap: 'wrap', gap: '8px',
+                  padding: '14px 16px', flexShrink: 0,
+                  borderBottom: '1px solid rgba(212,175,55,0.1)',
+                }}>
+                  {tabs.map(tab => {
+                    const active = activeTab === tab.key;
+                    return (
+                      <button key={tab.key} onClick={() => handleTabChange(tab.key)} style={{
+                        background: active ? 'rgba(212,175,55,0.14)' : 'rgba(255,255,255,0.04)',
+                        border: active ? '1px solid rgba(212,175,55,0.55)' : '1px solid rgba(255,255,255,0.09)',
+                        borderRadius: '50px',
+                        color: active ? '#D4AF37' : 'rgba(245,240,230,0.5)',
+                        padding: '7px 16px', cursor: 'pointer',
+                        fontFamily: "'Figtree', sans-serif", fontSize: '11px', fontWeight: active ? 600 : 400,
+                        letterSpacing: '0.07em', textTransform: 'uppercase', whiteSpace: 'nowrap',
+                        transition: 'all 0.2s',
+                      }}>{tab.label}</button>
+                    );
+                  })}
                 </div>
 
                 {/* Swatches */}
