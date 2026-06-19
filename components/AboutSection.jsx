@@ -1,4 +1,4 @@
-const { useState, useEffect } = React;
+﻿const { useState, useEffect } = React;
 
 function AboutSection() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -58,7 +58,7 @@ function AboutSection() {
             border: '1px solid rgba(255,255,255,0.12)',
             boxShadow: '0 24px 64px rgba(0,0,0,0.55)'
           }}>
-            <img src="images/familia.jpg" alt="Nuestra familia" style={{
+            <img src="images/familia.webp" alt="Nuestra familia" style={{
               width: '100%', aspectRatio: isMobile ? '1.2/1' : '4/5',
               objectFit: 'cover', objectPosition: 'center top',
               display: 'block'

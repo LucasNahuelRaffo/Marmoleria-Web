@@ -195,6 +195,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                       key={selected.id}
                       src={selected.mesa || selected.img}
                       alt={selected.name}
+                      loading="lazy"
                       style={{
                         width: '100%', height: '100%',
                         objectFit: selected.fit || 'cover', objectPosition: 'center',
@@ -285,7 +286,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                           transform: selected?.id === item.id ? 'scale(1.08)' : 'scale(1)',
                           boxShadow: selected?.id === item.id ? '0 4px 14px rgba(212,175,55,0.25)' : 'none',
                         }}>
-                          <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+                          <img src={item.img} alt={item.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
                         </div>
                         <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '10px', lineHeight: 1.3, color: selected?.id === item.id ? '#D4AF37' : 'rgba(245,240,230,0.5)', fontWeight: selected?.id === item.id ? 600 : 400 }}>
                           {item.name}
