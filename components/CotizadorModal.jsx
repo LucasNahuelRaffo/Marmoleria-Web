@@ -2,11 +2,10 @@ const { useState, useEffect } = React;
 
 function CotizadorModal({ context = 'all', onClose }) {
   const tabs = window.COTIZADOR_TABS[context] || window.COTIZADOR_TABS.all;
-  const isFormOnly = context === 'electricidad' || context === 'herrajes';
 
   const [activeTab, setActiveTab] = useState(tabs ? tabs[0].key : null);
   const [selected, setSelected] = useState(null);
-  const [step, setStep] = useState(isFormOnly ? 'form' : 'select');
+  const [step, setStep] = useState('select');
   const [form, setForm] = useState({ nombre: '', telefono: '', email: '', metros: '', descripcion: '' });
   const [sent, setSent] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -66,8 +65,8 @@ function CotizadorModal({ context = 'all', onClose }) {
       <div style={{
         background: '#0F0F13', border: '1px solid rgba(212,175,55,0.18)',
         borderRadius: '6px', width: '100%',
-        maxWidth: isFormOnly ? '580px' : '1080px',
-        height: isFormOnly ? 'auto' : (isMobile ? '85vh' : '650px'),
+        maxWidth: '1080px',
+        height: isMobile ? '85vh' : '650px',
         maxHeight: '90vh', display: 'flex', flexDirection: 'column',
         overflow: 'hidden', boxShadow: '0 32px 80px rgba(0,0,0,0.7)',
       }}>
@@ -82,7 +81,7 @@ function CotizadorModal({ context = 'all', onClose }) {
               Diseñá con confianza
             </h2>
             <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '11px', color: 'rgba(245,240,230,0.4)', marginTop: '3px' }}>
-              {isFormOnly ? 'Completá el formulario y te contactamos' : 'Seleccioná la textura y cotizá tu proyecto'}
+              {'Seleccioná la textura y cotizá tu proyecto'}
             </p>
           </div>
           <button onClick={onClose} style={{
@@ -121,12 +120,10 @@ function CotizadorModal({ context = 'all', onClose }) {
             /* Form step */
             <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '24px 16px' : '40px', display: 'flex', justifyContent: 'center' }}>
               <div style={{ width: '100%', maxWidth: '580px' }}>
-                {!isFormOnly && (
-                  <button onClick={() => setStep('select')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4AF37', fontFamily: "'Figtree', sans-serif", fontSize: '12px', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', padding: 0 }}>
-                    ← Volver a materiales
-                  </button>
-                )}
-                {selected && !isFormOnly && (
+                <button onClick={() => setStep('select')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#D4AF37', fontFamily: "'Figtree', sans-serif", fontSize: '12px', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', padding: 0 }}>
+                  ← Volver a materiales
+                </button>
+                {selected && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '26px', padding: '0', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}>
                     <div style={{ width: '100px', height: '80px', flexShrink: 0, overflow: 'hidden' }}>
                       <img src={selected.mesa || selected.img} alt={selected.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />

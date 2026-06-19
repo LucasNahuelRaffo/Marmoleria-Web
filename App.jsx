@@ -51,6 +51,112 @@ function WhatsAppButton() {
   );
 }
 
+const RUBROS = [
+  { label: 'Marmolería',   icon: '◈' },
+  { label: 'Iluminación',  icon: '◎' },
+  { label: 'Muebles',      icon: '▣' },
+  { label: 'Herrajes',     icon: '◆' },
+];
+
+function PersonalizaTodo({ onCotizarClick }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <section style={{
+      background: 'linear-gradient(160deg, #0d0d11 0%, #0B0B0F 60%, #0e0c09 100%)',
+      borderTop: '1px solid rgba(212,175,55,0.1)',
+      borderBottom: '1px solid rgba(212,175,55,0.1)',
+      padding: '88px 5.5%',
+      textAlign: 'center',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Glow de fondo */}
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '600px', height: '300px',
+        background: 'radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Eyebrow */}
+        <p style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '11px', fontWeight: 500,
+          letterSpacing: '0.22em', textTransform: 'uppercase',
+          color: '#D4AF37', marginBottom: '20px',
+        }}>Personalización completa</p>
+
+        <h2 style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 300,
+          color: '#F5F0E6', letterSpacing: '-0.02em',
+          lineHeight: 1.1, marginBottom: '18px',
+        }}>
+          Diseñá cada rincón<br />
+          <span style={{ fontWeight: 700 }}>de tu hogar</span>
+        </h2>
+
+        <p style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '16px', fontWeight: 400,
+          color: 'rgba(245,240,230,0.55)',
+          maxWidth: '480px', margin: '0 auto 40px',
+          lineHeight: 1.65,
+        }}>
+          Combiná materiales, herrajes, iluminación y muebles en una sola experiencia de diseño.
+        </p>
+
+        {/* Chips de rubros */}
+        <div style={{
+          display: 'flex', flexWrap: 'wrap',
+          justifyContent: 'center', gap: '10px',
+          marginBottom: '44px',
+        }}>
+          {RUBROS.map(r => (
+            <span key={r.label} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '7px',
+              background: 'rgba(212,175,55,0.07)',
+              border: '1px solid rgba(212,175,55,0.2)',
+              borderRadius: '50px',
+              padding: '7px 16px',
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: '12px', fontWeight: 500,
+              color: 'rgba(245,240,230,0.7)',
+              letterSpacing: '0.04em',
+            }}>
+              <span style={{ color: '#D4AF37', fontSize: '11px' }}>{r.icon}</span>
+              {r.label}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={onCotizarClick}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            background: hovered ? '#D4AF37' : 'transparent',
+            color: hovered ? '#0B0B0F' : '#D4AF37',
+            border: '1.5px solid #D4AF37',
+            borderRadius: '4px',
+            padding: '16px 44px',
+            cursor: 'pointer',
+            fontFamily: "'Figtree', sans-serif",
+            fontSize: '13px', fontWeight: 600,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            transition: 'background 0.25s, color 0.25s',
+          }}
+        >
+          Empezar a personalizar →
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [cotizadorOpen, setCotizadorOpen] = useState(false);
   const [cotizadorContext, setCotizadorContext] = useState('all');
@@ -94,6 +200,7 @@ function App() {
       }),
       React.createElement(AboutSection, null),
       React.createElement(InfoSections, { onInfoClick: openInfo }),
+      React.createElement(PersonalizaTodo, { onCotizarClick: () => openCotizador('all') }),
       React.createElement(Footer, { onCotizarClick: () => openCotizador('all') }),
       cotizadorOpen && React.createElement(CotizadorModal, {
         context: cotizadorContext,

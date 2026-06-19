@@ -42,6 +42,20 @@ window.MATERIALS_DATA = {
     { id: 'vanitory-blanco', name: 'Blanco Clásico', img: 'images/vanitorys/vanitory-blanco.png' },
     { id: 'vanitory-sencillo', name: 'Sencillo', img: 'images/vanitorys/vanitory-blanco-sencillo.png' },
   ],
+  herrajes: [
+    { id: 'tiraderas',     name: 'Tiraderas y Manijas', img: 'images/herrajes.jpg' },
+    { id: 'bisagras',      name: 'Bisagras Premium',    img: 'images/herrajes.jpg' },
+    { id: 'corredizas',    name: 'Sistemas Corredizos', img: 'images/herrajes-hero.png' },
+    { id: 'acc-cocina',    name: 'Accesorios de Cocina',img: 'images/herrajes-hero.png' },
+    { id: 'acc-bano',      name: 'Accesorios de Baño',  img: 'images/herrajes.jpg' },
+  ],
+  iluminacion: [
+    { id: 'lum-interior',    name: 'Luminación Interior',  img: 'images/electricidad-hero.png' },
+    { id: 'lum-led',         name: 'Tecnología LED',        img: 'images/electricidad-hero.png' },
+    { id: 'instalacion',     name: 'Instalación Eléctrica', img: 'images/electricidad-hero.png' },
+    { id: 'automatizacion',  name: 'Automatización',        img: 'images/electricidad-hero.png' },
+    { id: 'lum-exterior',    name: 'Luminación Exterior',   img: 'images/electricidad-hero.png' },
+  ],
 };
 
 window.COTIZADOR_TABS = {
@@ -54,12 +68,20 @@ window.COTIZADOR_TABS = {
     { key: 'cocinas', label: 'Cocinas' },
     { key: 'vanitorys', label: 'Vanitorys' },
   ],
+  herrajes: [
+    { key: 'herrajes', label: 'Herrajes' },
+  ],
+  electricidad: [
+    { key: 'iluminacion', label: 'Luminación' },
+  ],
   all: [
-    { key: 'marmoles', label: 'Mármoles' },
-    { key: 'granitos', label: 'Granitos' },
-    { key: 'purastone', label: 'Purastone' },
-    { key: 'cocinas', label: 'Cocinas' },
-    { key: 'vanitorys', label: 'Vanitorys' },
+    { key: 'marmoles',   label: 'Mármoles' },
+    { key: 'granitos',   label: 'Granitos' },
+    { key: 'purastone',  label: 'Purastone' },
+    { key: 'cocinas',    label: 'Cocinas' },
+    { key: 'vanitorys',  label: 'Vanitorys' },
+    { key: 'herrajes',   label: 'Herrajes' },
+    { key: 'iluminacion',label: 'Luminación' },
   ],
 };
 
