@@ -8,7 +8,6 @@ const SURF_TABS = [
 
 const MBL_TABS = [
   { key: 'cocinas',   label: 'Cocinas'   },
-  { key: 'vanitorys', label: 'Vanitorys' },
 ];
 
 /* ── Componentes auxiliares (nivel módulo, sin remount) ─────────────────── */
@@ -105,10 +104,10 @@ function CotizadorModal({ context = 'all', onClose }) {
     if (!window.KitchenScene) return;
     const scene = new window.KitchenScene(node);
     sceneInstRef.current = scene;
-    // Aplicar selecciones actuales al inicializar
+    // Aplicar selecciones actuales al inicializar (orden: mueble → superficie → herraje → luz)
     const s = currentSelRef.current;
-    if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
     if (s.mueble)             scene.setFurniture(s.mueble.id);
+    if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
     if (s.herraje)            scene.setHerraje(s.herraje.id);
     if (s.ilum)               scene.setIluminacion(s.ilum.id);
   }, []);
@@ -416,7 +415,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   {slotHeader('mueble', '▣', 'Muebles', mueble)}
                   {openSlot === 'mueble' && (
                     <div>
-                      <SubTabs tabs={MBL_TABS} active={mblTab} onChange={setMblTab} />
+                      {MBL_TABS.length > 1 && <SubTabs tabs={MBL_TABS} active={mblTab} onChange={setMblTab} />}
                       <SwatchGrid items={mblItems} selected={mueble} onPick={setMueble} isMobile={isMobile} />
                     </div>
                   )}
