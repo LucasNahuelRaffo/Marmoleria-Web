@@ -1,4 +1,4 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
 const SURF_TABS = [
   { key: 'marmoles',  label: 'Mármoles'  },
@@ -75,9 +75,9 @@ function CotizadorModal({ context = 'all', onClose }) {
                  : context === 'electricidad' ? 'ilum'
                  : 'surf';
 
-  const [surface,  setSurface]  = useState(null);         // { tabKey, item }
+  const [surface,  setSurface]  = useState(null);
   const [surfTab,  setSurfTab]  = useState('marmoles');
-  const [preview,  setPreview]  = useState(null);         // item en hover
+  const [preview,  setPreview]  = useState(null);
   const [mueble,   setMueble]   = useState(null);
   const [mblTab,   setMblTab]   = useState('cocinas');
   const [herraje,  setHerraje]  = useState(null);
@@ -88,12 +88,42 @@ function CotizadorModal({ context = 'all', onClose }) {
   const [sent,     setSent]     = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  /* ── Three.js refs ── */
+  const sceneInstRef     = useRef(null);
+  const currentSelRef    = useRef({ surface: null, mueble: null, herraje: null, ilum: null });
+
+  // Actualizar ref en cada render para que el callback ref lea valores frescos
+  currentSelRef.current = { surface, mueble, herraje, ilum };
+
+  // Callback ref: se ejecuta cuando el div del canvas monta/desmonta
+  const setSceneContainer = useCallback((node) => {
+    if (!node) {
+      sceneInstRef.current?.destroy();
+      sceneInstRef.current = null;
+      return;
+    }
+    if (!window.KitchenScene) return;
+    const scene = new window.KitchenScene(node);
+    sceneInstRef.current = scene;
+    // Aplicar selecciones actuales al inicializar
+    const s = currentSelRef.current;
+    if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
+    if (s.mueble)             scene.setFurniture(s.mueble.id);
+    if (s.herraje)            scene.setHerraje(s.herraje.id);
+    if (s.ilum)               scene.setIluminacion(s.ilum.id);
+  }, []);
+
   useEffect(() => {
     const onR = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', onR);
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('resize', onR); document.body.style.overflow = ''; };
   }, []);
+
+  // Actualizar escena cuando cambian mueble / herraje / ilum
+  useEffect(() => { if (mueble)  sceneInstRef.current?.setFurniture(mueble.id);   }, [mueble]);
+  useEffect(() => { if (herraje) sceneInstRef.current?.setHerraje(herraje.id);     }, [herraje]);
+  useEffect(() => { if (ilum)    sceneInstRef.current?.setIluminacion(ilum.id);    }, [ilum]);
 
   const D        = window.MATERIALS_DATA;
   const surfItems = D[surfTab]      || [];
@@ -102,11 +132,27 @@ function CotizadorModal({ context = 'all', onClose }) {
   const ilmItems  = D.iluminacion  || [];
 
   const totalSel = [surface, mueble, herraje, ilum].filter(Boolean).length;
-  const envItem  = preview || surface?.item;
-  const envImg   = envItem ? (envItem.mesa || envItem.img) : null;
-
   const toggle   = (id) => setOpenSlot(p => p === id ? null : id);
-  const pickSurf = (item) => { setSurface({ tabKey: surfTab, item }); setPreview(null); };
+
+  const pickSurf = (item) => {
+    setSurface({ tabKey: surfTab, item });
+    setPreview(null);
+    sceneInstRef.current?.setStoneMaterial(item.img);
+  };
+
+  const hoverSurf = (item) => {
+    if (!isMobile) {
+      setPreview(item);
+      sceneInstRef.current?.setStoneMaterial(item.img);
+    }
+  };
+
+  const leaveSurf = () => {
+    if (!isMobile) {
+      setPreview(null);
+      sceneInstRef.current?.setStoneMaterial(surface?.item?.img || null);
+    }
+  };
 
   const sInput = {
     width: '100%', background: 'rgba(255,255,255,0.04)',
@@ -128,7 +174,6 @@ function CotizadorModal({ context = 'all', onClose }) {
     ilum     && { label: 'Iluminación', item: ilum         },
   ].filter(Boolean);
 
-  /* Header de cada slot (función, no componente, para evitar remount) */
   const slotHeader = (id, icon, label, selItem) => {
     const open   = openSlot === id;
     const hasSel = !!selItem;
@@ -169,6 +214,8 @@ function CotizadorModal({ context = 'all', onClose }) {
       </button>
     );
   };
+
+  const envItem = preview || surface?.item;
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
@@ -277,66 +324,75 @@ function CotizadorModal({ context = 'all', onClose }) {
           /* SELECTOR */
           ) : (
             <>
-              {/* Panel izquierdo — ambiente */}
-              <div style={{ flex: isMobile ? 'none' : '0 0 52%', height: isMobile ? '220px' : 'auto', position: 'relative', overflow: 'hidden', background: '#08060A', flexShrink: 0 }}>
-                {envImg ? (
-                  <>
-                    <img
-                      key={envItem.id + (preview ? '-p' : '-s')}
-                      src={envImg} alt={envItem.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
-                    />
-                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,5,3,0.88) 0%, rgba(6,5,3,0.15) 50%, transparent 100%)' }} />
+              {/* Panel izquierdo — escena 3D */}
+              <div style={{
+                flex: isMobile ? 'none' : '0 0 52%',
+                height: isMobile ? '260px' : 'auto',
+                position: 'relative', overflow: 'hidden',
+                background: '#1a1612', flexShrink: 0,
+              }}>
+                {/* Canvas Three.js — callback ref monta/desmonta la escena */}
+                <div ref={setSceneContainer} style={{ width: '100%', height: '100%' }} />
 
-                    {/* Nombre + badge */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: isMobile ? '20px 16px 14px' : '36px 28px 22px' }}>
-                      {surface && !preview && (
-                        <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
-                          {surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone'}
-                        </p>
-                      )}
-                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '20px' : '28px', fontWeight: 700, color: '#F5F0E6', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-                        {envItem.name}
+                {/* Gradiente inferior para legibilidad de texto */}
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,5,3,0.82) 0%, rgba(6,5,3,0.1) 45%, transparent 100%)', pointerEvents: 'none' }} />
+
+                {/* Nombre del material seleccionado / en preview */}
+                {envItem && (
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: isMobile ? '20px 16px 14px' : '36px 28px 22px', pointerEvents: 'none' }}>
+                    {surface && !preview && (
+                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        {surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone'}
                       </p>
-                      {preview && (
-                        <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: 'rgba(245,240,230,0.4)', marginTop: '4px', letterSpacing: '0.06em' }}>
-                          Vista previa · click para seleccionar
-                        </p>
-                      )}
-                      {surface && !preview && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '50px', padding: '4px 10px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: '#D4AF37' }}>
-                          ✓ Seleccionado
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Chips de otras selecciones sobre la imagen */}
-                    {[mueble && { item: mueble, label: 'Mueble' }, herraje && { item: herraje, label: 'Herraje' }, ilum && { item: ilum, label: 'Iluminación' }].filter(Boolean).length > 0 && (
-                      <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                        {[
-                          mueble  && { item: mueble,  label: 'Mueble'      },
-                          herraje && { item: herraje, label: 'Herraje'     },
-                          ilum    && { item: ilum,    label: 'Iluminación' },
-                        ].filter(Boolean).map(({ item, label }) => (
-                          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50px', padding: '4px 10px 4px 4px' }}>
-                            <div style={{ width: '20px', height: '20px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                              <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
-                            </div>
-                            <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(245,240,230,0.65)', whiteSpace: 'nowrap' }}>{item.name}</span>
-                          </div>
-                        ))}
-                      </div>
                     )}
-                  </>
-                ) : (
-                  /* Placeholder cuando no hay superficie elegida */
-                  <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '52px', opacity: 0.1, marginBottom: '16px', lineHeight: 1 }}>◈</div>
-                    <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '13px', color: 'rgba(245,240,230,0.2)', lineHeight: 1.7 }}>
-                      Elegí una superficie<br/>para ver el ambiente
+                    <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '20px' : '28px', fontWeight: 700, color: '#F5F0E6', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+                      {envItem.name}
+                    </p>
+                    {preview && (
+                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: 'rgba(245,240,230,0.4)', marginTop: '4px', letterSpacing: '0.06em' }}>
+                        Vista previa · click para seleccionar
+                      </p>
+                    )}
+                    {surface && !preview && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '50px', padding: '4px 10px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: '#D4AF37' }}>
+                        ✓ Seleccionado
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Placeholder cuando no hay nada elegido */}
+                {!envItem && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', textAlign: 'center', pointerEvents: 'none' }}>
+                    <div style={{ fontSize: '52px', opacity: 0.12, marginBottom: '16px', lineHeight: 1 }}>◈</div>
+                    <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '13px', color: 'rgba(245,240,230,0.22)', lineHeight: 1.7 }}>
+                      Elegí una superficie<br/>para ver el material en la cocina
                     </p>
                   </div>
                 )}
+
+                {/* Chips selecciones activas (mueble/herraje/ilum) */}
+                {[mueble && { item: mueble, label: 'Mueble' }, herraje && { item: herraje, label: 'Herraje' }, ilum && { item: ilum, label: 'Iluminación' }].filter(Boolean).length > 0 && (
+                  <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'none' }}>
+                    {[
+                      mueble  && { item: mueble,  label: 'Mueble'      },
+                      herraje && { item: herraje, label: 'Herraje'     },
+                      ilum    && { item: ilum,    label: 'Iluminación' },
+                    ].filter(Boolean).map(({ item, label }) => (
+                      <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50px', padding: '4px 10px 4px 4px' }}>
+                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                          <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+                        </div>
+                        <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(245,240,230,0.65)', whiteSpace: 'nowrap' }}>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Badge 3D */}
+                <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(11,11,15,0.65)', backdropFilter: 'blur(6px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '50px', padding: '4px 10px', pointerEvents: 'none' }}>
+                  <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(212,175,55,0.8)', letterSpacing: '0.12em' }}>VISTA 3D</span>
+                </div>
               </div>
 
               {/* Panel derecho — acordeón */}
@@ -350,8 +406,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                       <SubTabs tabs={SURF_TABS} active={surfTab} onChange={setSurfTab} />
                       <SwatchGrid
                         items={surfItems} selected={surface?.item} onPick={pickSurf}
-                        onEnter={!isMobile ? item => setPreview(item) : null}
-                        onLeave={!isMobile ? () => setPreview(null) : null}
+                        onEnter={hoverSurf} onLeave={leaveSurf}
                         isMobile={isMobile}
                       />
                     </div>
