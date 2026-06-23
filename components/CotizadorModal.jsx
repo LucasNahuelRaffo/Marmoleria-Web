@@ -116,7 +116,7 @@ function CotizadorModal({ context = 'all', onClose }) {
       // Aplicar selecciones actuales (orden: mueble → superficie → herraje → luz)
       const s = currentSelRef.current;
       if (s.mueble)             scene.setFurniture(s.mueble.id);
-      if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
+      if (s.surface?.item)      scene.setStoneMaterial(s.surface.item);
       if (s.herraje)            scene.setHerraje(s.herraje.id);
       if (s.ilum)               scene.setIluminacion(s.ilum.id);
     };
@@ -147,20 +147,20 @@ function CotizadorModal({ context = 'all', onClose }) {
   const pickSurf = (item) => {
     setSurface({ tabKey: surfTab, item });
     setPreview(null);
-    sceneInstRef.current?.setStoneMaterial(item.img);
+    sceneInstRef.current?.setStoneMaterial(item);
   };
 
   const hoverSurf = (item) => {
     if (!isMobile) {
       setPreview(item);
-      sceneInstRef.current?.setStoneMaterial(item.img);
+      sceneInstRef.current?.setStoneMaterial(item);
     }
   };
 
   const leaveSurf = () => {
     if (!isMobile) {
       setPreview(null);
-      sceneInstRef.current?.setStoneMaterial(surface?.item?.img || null);
+      sceneInstRef.current?.setStoneMaterial(surface?.item || null);
     }
   };
 

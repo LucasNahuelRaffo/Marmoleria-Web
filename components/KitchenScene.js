@@ -119,7 +119,8 @@ const ASSET = 'assets/3d/';
       this._buildCountertops();
       this._buildFixtures();
       this._buildLuminaires();
-      this._loadProps();                       // planta + jarrón (async, tolerante)
+      this._loadProps();                       // planta + jarrón GLB (async, tolerante)
+      this._buildDecor();                      // banquetas, frutero, vajilla, cuadros (geometría)
 
       this.setFurniture('cocina-l');
       this.setHerraje('h-101');
@@ -156,6 +157,23 @@ const ASSET = 'assets/3d/';
           if (o.material) { Array.isArray(o.material) ? o.material.forEach(m => m.dispose()) : o.material.dispose(); }
         });
         g.remove(c);
+      }
+    }
+    /* Marco shaker (relieve perimetral) sobre un frente. n='z' (frontal) o 'x' (lateral) */
+    _shakerFrame(cx, cy, cz, w, h, n, mat, group) {
+      const t = 0.05, d = 0.018, iw = w - 0.07, ih = h - 0.07;
+      if (n === 'z') {
+        const z = cz + 0.012;
+        this._box(iw, t, d, mat, cx, cy + ih / 2, z, group);
+        this._box(iw, t, d, mat, cx, cy - ih / 2, z, group);
+        this._box(t, ih, d, mat, cx - iw / 2, cy, z, group);
+        this._box(t, ih, d, mat, cx + iw / 2, cy, z, group);
+      } else {
+        const x = cx + 0.012;
+        this._box(d, t, iw, mat, x, cy + ih / 2, cz, group);
+        this._box(d, t, iw, mat, x, cy - ih / 2, cz, group);
+        this._box(d, ih, t, mat, x, cy, cz - iw / 2, group);
+        this._box(d, ih, t, mat, x, cy, cz + iw / 2, group);
       }
     }
 
@@ -280,14 +298,18 @@ const ASSET = 'assets/3d/';
       this._box(0.05, 0.26, 0.05, faucetMat, 0.55, 1.04, -2.08, this.scene);
       const spout = this._box(0.04, 0.04, 0.22, faucetMat, 0.55, 1.16, -1.97, this.scene);
 
-      /* Campana de acero sobre el sector anafe (izquierda de la mesada principal) */
-      const steel = new THREE.MeshStandardMaterial({ color: 0xb9bcc0, roughness: 0.25, metalness: 0.9 });
+      /* Campana de acero tipo pirámide truncada sobre el anafe, apoyada a la pared */
+      const steel = new THREE.MeshStandardMaterial({ color: 0xc2c5c9, roughness: 0.22, metalness: 0.92 });
       this.campana = new THREE.Group();
-      const cBody = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.46, 0.16, 24), steel);
-      cBody.position.set(-1.25, 1.95, -2.05);
-      const cDuct = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.55, 16), steel);
-      cDuct.position.set(-1.25, 2.3, -2.18);
-      this.campana.add(cBody, cDuct);
+      const cBody = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.5, 0.34, 4), steel);
+      cBody.rotation.y = Math.PI / 4;                 // caras al frente/lados
+      cBody.position.set(-1.25, 1.78, -2.0);
+      cBody.castShadow = true;
+      const cBrim = new THREE.Mesh(new THREE.BoxGeometry(0.74, 0.05, 0.58), steel);
+      cBrim.position.set(-1.25, 1.6, -2.0);
+      const cDuct = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.62, 16), steel);
+      cDuct.position.set(-1.25, 2.26, -2.05);
+      this.campana.add(cBody, cBrim, cDuct);
       this.scene.add(this.campana);
 
       /* Heladera (rincón derecho, contra pared de fondo) */
@@ -301,7 +323,8 @@ const ASSET = 'assets/3d/';
 
     /* ── Luminarias visibles (se construyen una vez) ──────── */
     _buildLuminaires() {
-      const emis = (color) => new THREE.MeshStandardMaterial({ color: 0x111111, emissive: color, emissiveIntensity: 0, roughness: 0.4 });
+      /* base gris claro: apagado se ve como aluminio/lámpara, nunca como barra negra */
+      const emis = (color) => new THREE.MeshStandardMaterial({ color: 0xcfcfcf, emissive: color, emissiveIntensity: 0, roughness: 0.4, metalness: 0.2 });
 
       /* Spots empotrados en el techo */
       this.spots = [];
@@ -357,20 +380,39 @@ const ASSET = 'assets/3d/';
 
     /* ════════════════════ API pública ════════════════════ */
 
-    async setStoneMaterial(imgUrl) {
-      this._reqStone = imgUrl;
-      if (!imgUrl) {
-        this.stoneMat.map = null;
-        this.stoneMat.color.set(FURNITURE[this._curFurniture].defaultStone);
-        this.stoneMat.roughness = 0.22; this.stoneMat.needsUpdate = true;
+    async setStoneMaterial(item) {
+      const token = item ? (item.id || item.img || item.tex) : null;
+      this._reqStone = token;
+      const M = this.stoneMat;
+      if (!item) {
+        M.map = M.normalMap = M.roughnessMap = null;
+        M.color.set(FURNITURE[this._curFurniture].defaultStone);
+        M.roughness = 0.22; M.needsUpdate = true;
         return;
       }
-      const tex = await this._loadTex(imgUrl);
-      if (this._reqStone !== imgUrl) return;
-      tex.repeat.set(2, 1);
-      this.stoneMat.map = tex;
-      this.stoneMat.color.set(0xffffff);
-      this.stoneMat.roughness = 0.16; this.stoneMat.needsUpdate = true;
+      if (item.tex) {
+        /* Textura PBR realista (color + normal + rugosidad) */
+        const base = ASSET + 'stone/' + item.tex + '/';
+        const [color, nor, rough] = await Promise.all([
+          this._loadTex(base + 'color.jpg', true),
+          this._loadTex(base + 'nor.jpg',   false),
+          this._loadTex(base + 'rough.jpg', false),
+        ]);
+        if (this._reqStone !== token) return;
+        [color, nor, rough].forEach(t => t.repeat.set(1.6, 1));
+        M.map = color; M.normalMap = nor; M.roughnessMap = rough;
+        M.normalScale.set(0.6, 0.6);
+        M.color.set(0xffffff);
+        M.roughness = 1.0; M.metalness = 0.0; M.envMapIntensity = 1.1;
+        M.needsUpdate = true;
+      } else {
+        /* Fallback: swatch del catálogo (con anisotropy) */
+        const tex = await this._loadTex(item.img, true);
+        if (this._reqStone !== token) return;
+        tex.repeat.set(1, 1);
+        M.map = tex; M.normalMap = M.roughnessMap = null;
+        M.color.set(0xffffff); M.roughness = 0.18; M.needsUpdate = true;
+      }
     }
 
     setFurniture(id) {
@@ -406,8 +448,9 @@ const ASSET = 'assets/3d/';
             this.frentes.push({ x: cx + modW / 2 - 0.06, y: cy, z: frenteZ + 0.02, n: 'z', vertical: false });
           }
         } else {
-          /* Puerta entera */
+          /* Puerta entera con marco shaker (relieve) */
           this._box(modW - 0.04, 0.72, 0.02, cabMat, cx, 0.47, frenteZ, this.cabGroup);
+          this._shakerFrame(cx, 0.47, frenteZ, modW - 0.04, 0.72, 'z', cabMat, this.cabGroup);
           this.frentes.push({ x: cx + modW / 2 - 0.07, y: 0.6, z: frenteZ + 0.02, n: 'z', vertical: true });
         }
         /* Perfil gola: ranura de aluminio en el tope del frente (sin manijas) */
@@ -423,6 +466,7 @@ const ASSET = 'assets/3d/';
           this._box(0.05, 0.03, 0.5, golaMat, ladoX + 0.01, 0.83, cz, this.cabGroup);
         } else {
           this._box(0.02, 0.72, 0.5, cabMat, ladoX, 0.47, cz, this.cabGroup);
+          this._shakerFrame(ladoX, 0.47, cz, 0.5, 0.72, 'x', cabMat, this.cabGroup);
           this.frentes.push({ x: ladoX + 0.02, y: 0.6, z: cz + 0.2, n: 'x', vertical: true });
         }
       });
@@ -535,12 +579,12 @@ const ASSET = 'assets/3d/';
         this.spots.forEach(s => { s.light.intensity = 0; s.led.material.emissiveIntensity = 0; });
         this.pendants.forEach(p => { p.light.intensity = 0; p.bulb.material.emissiveIntensity = 0; });
         this.led.lights.forEach(l => l.intensity = 0);
-        this.led.emissives.forEach(e => e.material.emissiveIntensity = 0);
+        this.led.emissives.forEach(e => { e.material.emissiveIntensity = 0; e.visible = false; });
         this.plafon.light.intensity = 0; this.plafon.panel.material.emissiveIntensity = 0;
       };
       const setSpots   = (i, c) => this.spots.forEach(s => { s.light.intensity = i; s.light.color.set(c); s.led.material.emissive.set(c); s.led.material.emissiveIntensity = i > 0 ? 1.4 : 0; });
       const setPend    = (i, c) => this.pendants.forEach(p => { p.light.intensity = i; p.light.color.set(c); p.bulb.material.emissive.set(c); p.bulb.material.emissiveIntensity = i > 0 ? 1.6 : 0; });
-      const setLed     = (i, c) => { this.led.lights.forEach(l => { l.intensity = i; l.color.set(c); }); this.led.emissives.forEach(e => { e.material.emissive.set(c); e.material.emissiveIntensity = i > 0 ? 1.5 : 0; }); };
+      const setLed     = (i, c) => { this.led.lights.forEach(l => { l.intensity = i; l.color.set(c); }); this.led.emissives.forEach(e => { e.visible = i > 0; e.material.emissive.set(c); e.material.emissiveIntensity = i > 0 ? 1.5 : 0; }); };
       const setPlafon  = (i, c) => { this.plafon.light.intensity = i; this.plafon.light.color.set(c); this.plafon.panel.material.emissive.set(c); this.plafon.panel.material.emissiveIntensity = i > 0 ? 1.3 : 0; };
 
       off();
@@ -579,9 +623,11 @@ const ASSET = 'assets/3d/';
     /* ── Piso de madera PBR (diff + normal + rough) ──────── */
     _applyFloorTextures() {
       const L = new THREE.TextureLoader();
+      const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
       const set = (tex, srgb) => {
         tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
         tex.repeat.set(4, 4);
+        tex.anisotropy = maxAniso;
         if (srgb) tex.colorSpace = THREE.SRGBColorSpace;
         return tex;
       };
@@ -596,9 +642,9 @@ const ASSET = 'assets/3d/';
       /* Planta en maceta, en el piso (rincón frente-derecha, espacio libre) */
       this._loadProp(loader, ASSET + 'potted_plant_01/potted_plant_01_1k.gltf',
         { targetH: 0.85, x: 1.35, z: 0.55, onFloor: true });
-      /* Jarrón sobre la mesada principal (sector libre) */
+      /* Jarrón sobre la mesada lateral (sector libre, no choca con vajilla) */
       this._loadProp(loader, ASSET + 'ceramic_vase_01/ceramic_vase_01_1k.gltf',
-        { targetH: 0.34, x: -0.1, z: -1.78, baseY: 0.925 });
+        { targetH: 0.32, x: -2.0, z: -1.0, baseY: 0.925 });
     }
 
     _loadProp(loader, url, opt) {
@@ -621,13 +667,86 @@ const ASSET = 'assets/3d/';
       }, undefined, () => console.warn('[KitchenScene] no se pudo cargar prop:', url));
     }
 
+    /* ── Decoración procedural (banquetas, frutero, vajilla, cuadros) ── */
+    _buildDecor() {
+      const G = this.propsGroup;
+      const wood   = this._std(0x9c6b3f, 0.6);
+      const steelP = new THREE.MeshStandardMaterial({ color: 0xc8ccd0, roughness: 0.25, metalness: 0.9 });
+      const MY = 0.925;  // altura tope mesada
+
+      /* Banquetas desayunador (frente a la mesada) */
+      [0.2, 0.95].forEach(x => {
+        const g = new THREE.Group();
+        const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 22), wood);
+        seat.position.y = 0.63; seat.castShadow = true; g.add(seat);
+        [[-0.12, -0.12], [0.12, -0.12], [-0.12, 0.12], [0.12, 0.12]].forEach(([dx, dz]) => {
+          const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.63, 8), steelP);
+          leg.position.set(dx, 0.315, dz); leg.castShadow = true; g.add(leg);
+        });
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.14, 0.008, 8, 22), steelP);
+        ring.rotation.x = Math.PI / 2; ring.position.y = 0.24; g.add(ring);
+        g.position.set(x, 0, -0.95);
+        G.add(g);
+      });
+
+      /* Frutero con frutas (mesada principal) */
+      const bowl = new THREE.Mesh(
+        new THREE.SphereGeometry(0.13, 22, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2),
+        new THREE.MeshStandardMaterial({ color: 0xe8e3d8, roughness: 0.25, metalness: 0.05 })
+      );
+      bowl.position.set(0.15, MY + 0.05, -1.82); bowl.castShadow = true; G.add(bowl);
+      const fruitCols = [0xd8682f, 0xc0392b, 0x6b8e23, 0xe0a92f, 0x8e44ad];
+      fruitCols.forEach((c, i) => {
+        const f = new THREE.Mesh(new THREE.SphereGeometry(0.038, 14, 12), this._std(c, 0.5));
+        const a = (i / fruitCols.length) * Math.PI * 2;
+        f.position.set(0.15 + Math.cos(a) * 0.05, MY + 0.085, -1.82 + Math.sin(a) * 0.05);
+        f.castShadow = true; G.add(f);
+      });
+
+      /* Olla con tapa sobre el anafe */
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.1, 0.12, 20), steelP);
+      pot.position.set(-1.3, MY + 0.07, -1.95); pot.castShadow = true; G.add(pot);
+      const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.112, 0.112, 0.02, 20), steelP);
+      lid.position.set(-1.3, MY + 0.14, -1.95); G.add(lid);
+      const knob = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), this._std(0x222222, 0.5));
+      knob.position.set(-1.3, MY + 0.16, -1.95); G.add(knob);
+
+      /* Tabla de cortar + cuchillo (mesada) */
+      const board = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.022, 0.2), this._std(0x8a5a30, 0.55));
+      board.position.set(-0.55, MY + 0.012, -1.75); board.castShadow = true; G.add(board);
+      const knife = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.006, 0.03), steelP);
+      knife.position.set(-0.5, MY + 0.027, -1.82); knife.rotation.y = 0.3; G.add(knife);
+      const knifeH = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.012, 0.018), this._std(0x2a2a2a, 0.5));
+      knifeH.position.set(-0.62, MY + 0.027, -1.78); knifeH.rotation.y = 0.3; G.add(knifeH);
+
+      /* Botella de aceite */
+      const oil = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.18, 14),
+        new THREE.MeshStandardMaterial({ color: 0x4a6b2f, roughness: 0.15, metalness: 0.1, transparent: true, opacity: 0.85 }));
+      oil.position.set(-0.95, MY + 0.09, -1.95); oil.castShadow = true; G.add(oil);
+      const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.018, 0.06, 12), this._std(0x999999, 0.3, 0.7));
+      neck.position.set(-0.95, MY + 0.21, -1.95); G.add(neck);
+
+      /* Cuadros en la pared lateral izquierda (x = -2.5, miran +x) */
+      const frame = this._std(0x2b2b2b, 0.5);
+      const arts = ['images/marmoles/Negro-marquina.webp', 'images/marmoles/Carrara.webp'];
+      [[1.75, -0.2], [1.75, 0.55]].forEach(([y, z], i) => {
+        const fr = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.62, 0.46), frame);
+        fr.rotation.y = Math.PI / 2; fr.position.set(-2.49, y, z); fr.castShadow = true; G.add(fr);
+        const canvasMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.7 });
+        this._loadTex(arts[i], true).then(t => { canvasMat.map = t; canvasMat.color.set(0xffffff); canvasMat.needsUpdate = true; });
+        const canvas = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.56), canvasMat);
+        canvas.rotation.y = Math.PI / 2; canvas.position.set(-2.468, y, z); G.add(canvas);
+      });
+    }
+
     /* ── Interno ─────────────────────────────────────────── */
-    async _loadTex(url) {
+    async _loadTex(url, srgb = true) {
       if (_texCache.has(url)) return _texCache.get(url);
       return new Promise(resolve => {
         new THREE.TextureLoader().load(url, tex => {
-          tex.colorSpace = THREE.SRGBColorSpace;
+          tex.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace;
           tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+          tex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
           _texCache.set(url, tex);
           resolve(tex);
         });
