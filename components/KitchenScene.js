@@ -2,6 +2,11 @@ import * as THREE from 'three';
 import { RGBELoader }   from 'three/addons/loaders/RGBELoader.js';
 import { GLTFLoader }   from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer }   from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }       from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass }         from 'three/addons/postprocessing/GTAOPass.js';
+import { UnrealBloomPass }  from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass }       from 'three/addons/postprocessing/OutputPass.js';
 
 const _texCache = new Map();
 const ASSET = 'assets/3d/';
@@ -121,6 +126,7 @@ const ASSET = 'assets/3d/';
       this._buildLuminaires();
       this._loadProps();                       // planta + jarrón GLB (async, tolerante)
       this._buildDecor();                      // banquetas, frutero, vajilla, cuadros (geometría)
+      this._buildComposer(w, h);               // post-procesado: oclusión ambiental + bloom
 
       this.setFurniture('cocina-l');
       this.setHerraje('h-101');
@@ -134,6 +140,7 @@ const ASSET = 'assets/3d/';
           this.camera.aspect = width / height;
           this.camera.updateProjectionMatrix();
           this.renderer.setSize(width, height);
+          if (this.composer) this.composer.setSize(width, height);
         }
       });
       this._ro.observe(container);
@@ -213,6 +220,31 @@ const ASSET = 'assets/3d/';
         hdr.dispose();
         this._pmrem.dispose();
       }, undefined, () => console.warn('[KitchenScene] no se pudo cargar el HDRI'));
+    }
+
+    /* ── Post-procesado: oclusión ambiental (GTAO) + bloom ── */
+    _buildComposer(w, h) {
+      try {
+        this.composer = new EffectComposer(this.renderer);
+        this.composer.addPass(new RenderPass(this.scene, this.camera));
+
+        /* Oclusión ambiental de contacto → sombras suaves donde los objetos se tocan */
+        const gtao = new GTAOPass(this.scene, this.camera, w, h);
+        gtao.updateGtaoMaterial({ radius: 0.35, distanceExponent: 1.0, thickness: 0.4, scale: 1.0, samples: 16 });
+        gtao.blendIntensity = 0.85;
+        this.composer.addPass(gtao);
+        this._gtao = gtao;
+
+        /* Bloom suave → solo las luminarias muy brillantes destellan */
+        const bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.32, 0.55, 0.85);
+        this.composer.addPass(bloom);
+
+        /* OutputPass aplica tone mapping + sRGB al canvas (una sola vez) */
+        this.composer.addPass(new OutputPass());
+      } catch (e) {
+        console.warn('[KitchenScene] post-procesado no disponible, render directo:', e);
+        this.composer = null;
+      }
     }
 
     /* ── Caparazón: piso, paredes, techo, ventana ────────── */
@@ -757,7 +789,8 @@ const ASSET = 'assets/3d/';
       this._animId = requestAnimationFrame(() => this._animate());
       if (this.controls) this.controls.update();
       if (this.container.clientWidth > 0 && this.container.clientHeight > 0) {
-        this.renderer.render(this.scene, this.camera);
+        if (this.composer) this.composer.render();
+        else this.renderer.render(this.scene, this.camera);
       }
     }
 
@@ -765,6 +798,7 @@ const ASSET = 'assets/3d/';
       cancelAnimationFrame(this._animId);
       if (this._idleTimer) clearTimeout(this._idleTimer);
       if (this.controls) this.controls.dispose();
+      if (this.composer) this.composer.dispose();
       if (this._envMap) this._envMap.dispose();
       if (this._ro) this._ro.disconnect();
       this.renderer.dispose();
