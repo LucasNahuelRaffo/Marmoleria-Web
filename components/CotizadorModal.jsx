@@ -90,6 +90,7 @@ function CotizadorModal({ context = 'all', onClose }) {
   /* ── Three.js refs ── */
   const sceneInstRef     = useRef(null);
   const currentSelRef    = useRef({ surface: null, mueble: null, herraje: null, ilum: null });
+  const sceneRetryRef    = useRef(null);
 
   // Actualizar ref en cada render para que el callback ref lea valores frescos
   currentSelRef.current = { surface, mueble, herraje, ilum };
@@ -97,19 +98,29 @@ function CotizadorModal({ context = 'all', onClose }) {
   // Callback ref: se ejecuta cuando el div del canvas monta/desmonta
   const setSceneContainer = useCallback((node) => {
     if (!node) {
+      if (sceneRetryRef.current) { clearTimeout(sceneRetryRef.current); sceneRetryRef.current = null; }
       sceneInstRef.current?.destroy();
       sceneInstRef.current = null;
       return;
     }
-    if (!window.KitchenScene) return;
-    const scene = new window.KitchenScene(node);
-    sceneInstRef.current = scene;
-    // Aplicar selecciones actuales al inicializar (orden: mueble → superficie → herraje → luz)
-    const s = currentSelRef.current;
-    if (s.mueble)             scene.setFurniture(s.mueble.id);
-    if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
-    if (s.herraje)            scene.setHerraje(s.herraje.id);
-    if (s.ilum)               scene.setIluminacion(s.ilum.id);
+    // KitchenScene es un módulo ES que carga async; reintentar hasta que esté listo
+    let tries = 0;
+    const tryInit = () => {
+      if (!node.isConnected) return;                 // el modal se cerró mientras esperaba
+      if (!window.KitchenScene) {
+        if (tries++ < 40) { sceneRetryRef.current = setTimeout(tryInit, 150); }
+        return;
+      }
+      const scene = new window.KitchenScene(node);
+      sceneInstRef.current = scene;
+      // Aplicar selecciones actuales (orden: mueble → superficie → herraje → luz)
+      const s = currentSelRef.current;
+      if (s.mueble)             scene.setFurniture(s.mueble.id);
+      if (s.surface?.item?.img) scene.setStoneMaterial(s.surface.item.img);
+      if (s.herraje)            scene.setHerraje(s.herraje.id);
+      if (s.ilum)               scene.setIluminacion(s.ilum.id);
+    };
+    tryInit();
   }, []);
 
   useEffect(() => {

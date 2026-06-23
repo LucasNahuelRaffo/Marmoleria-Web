@@ -1,9 +1,10 @@
-(function () {
-  'use strict';
-  if (!window.THREE) { console.warn('[KitchenScene] Three.js no cargado'); return; }
+import * as THREE from 'three';
+import { RGBELoader }   from 'three/addons/loaders/RGBELoader.js';
+import { GLTFLoader }   from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-  const THREE = window.THREE;
-  const _texCache = new Map();
+const _texCache = new Map();
+const ASSET = 'assets/3d/';
 
   /* ── Materiales de herraje (acabados) ─────────────────────────────────── */
   const FINISH = {
@@ -67,31 +68,58 @@
       this.renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
       this.renderer.outputColorSpace  = THREE.SRGBColorSpace;
       this.renderer.toneMapping       = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 0.92;
+      this.renderer.toneMappingExposure = 1.0;
       Object.assign(this.renderer.domElement.style, { width: '100%', height: '100%', display: 'block' });
       container.appendChild(this.renderer.domElement);
 
       /* Scene */
       this.scene = new THREE.Scene();
       this.scene.background = new THREE.Color(0xe9e3da);
-      this.scene.fog = new THREE.Fog(0xe9e3da, 11, 22);
+      this.scene.fog = new THREE.Fog(0xe9e3da, 12, 24);
 
       /* Camera */
+      this.target = new THREE.Vector3(-0.3, 0.85, -1.25);
       this.camera = new THREE.PerspectiveCamera(48, w / h, 0.05, 40);
       this.camera.position.set(2.45, 1.78, 3.05);
-      this.camera.lookAt(-0.25, 0.74, -1.0);
+      this.camera.lookAt(this.target);
+
+      /* OrbitControls — cámara animada (auto-órbita + arrastre) */
+      this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+      this.controls.target.copy(this.target);
+      this.controls.enableDamping = true;
+      this.controls.dampingFactor = 0.08;
+      this.controls.enablePan     = false;
+      this.controls.autoRotate    = true;
+      this.controls.autoRotateSpeed = 0.55;
+      this.controls.minDistance   = 2.6;
+      this.controls.maxDistance   = 5.5;
+      this.controls.minPolarAngle = Math.PI * 0.18;
+      this.controls.maxPolarAngle = Math.PI * 0.49;
+      this.controls.update();
+      this._idleTimer = null;
+      this.controls.addEventListener('start', () => {
+        this.controls.autoRotate = false;
+        if (this._idleTimer) clearTimeout(this._idleTimer);
+      });
+      this.controls.addEventListener('end', () => {
+        if (this._idleTimer) clearTimeout(this._idleTimer);
+        this._idleTimer = setTimeout(() => { this.controls.autoRotate = true; }, 4000);
+      });
 
       this.frentes = [];                       // posiciones de frentes para herrajes
       this.cabGroup    = new THREE.Group();    // gabinetes (reconstruible)
       this.applGroup   = new THREE.Group();    // anafe/horno (reconstruible)
       this.handleGroup = new THREE.Group();    // manijas (reconstruible)
-      this.scene.add(this.cabGroup, this.applGroup, this.handleGroup);
+      this.propsGroup  = new THREE.Group();    // props decorativos (planta, jarrón)
+      this.scene.add(this.cabGroup, this.applGroup, this.handleGroup, this.propsGroup);
 
       this._buildLights();
+      this._buildEnvironment();                // HDRI → reflejos realistas
       this._buildShell();
       this._buildCountertops();
       this._buildFixtures();
       this._buildLuminaires();
+      this._loadProps();                       // planta + jarrón (async, tolerante)
 
       this.setFurniture('cocina-l');
       this.setHerraje('h-101');
@@ -131,12 +159,12 @@
       }
     }
 
-    /* ── Luces base ──────────────────────────────────────── */
+    /* ── Luces base (el HDRI aporta el resto del relleno) ── */
     _buildLights() {
-      this.ambient = new THREE.AmbientLight(0xfbf4e8, 0.55);
+      this.ambient = new THREE.AmbientLight(0xfbf4e8, 0.3);
       this.scene.add(this.ambient);
 
-      this.hemi = new THREE.HemisphereLight(0xfff6e6, 0x6b6258, 0.45);
+      this.hemi = new THREE.HemisphereLight(0xfff6e6, 0x6b6258, 0.25);
       this.scene.add(this.hemi);
 
       this.sun = new THREE.DirectionalLight(0xfff4e2, 1.25);
@@ -157,13 +185,27 @@
       this.scene.add(this.winLight);
     }
 
+    /* ── Environment map (HDRI) → reflejos PBR realistas ──── */
+    _buildEnvironment() {
+      this._pmrem = new THREE.PMREMGenerator(this.renderer);
+      new RGBELoader().load(ASSET + 'brown_photostudio_01_1k.hdr', (hdr) => {
+        const envMap = this._pmrem.fromEquirectangular(hdr).texture;
+        this.scene.environment = envMap;     // ilumina y refleja (no es el background)
+        this._envMap = envMap;
+        hdr.dispose();
+        this._pmrem.dispose();
+      }, undefined, () => console.warn('[KitchenScene] no se pudo cargar el HDRI'));
+    }
+
     /* ── Caparazón: piso, paredes, techo, ventana ────────── */
     _buildShell() {
-      /* Piso — porcelanato cálido suave */
-      const floor = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), this._std(0xd8cfc2, 0.7, 0.04));
+      /* Piso — madera realista (textura PBR, carga async) */
+      this.floorMat = new THREE.MeshStandardMaterial({ color: 0xb59a78, roughness: 0.65, metalness: 0 });
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), this.floorMat);
       floor.rotation.x = -Math.PI / 2;
       floor.receiveShadow = true;
       this.scene.add(floor);
+      this._applyFloorTextures();
 
       /* Paredes off-white cálido */
       const wallMat = this._std(0xf2ede5, 0.95);
@@ -534,6 +576,51 @@
       }
     }
 
+    /* ── Piso de madera PBR (diff + normal + rough) ──────── */
+    _applyFloorTextures() {
+      const L = new THREE.TextureLoader();
+      const set = (tex, srgb) => {
+        tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(4, 4);
+        if (srgb) tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+      };
+      L.load(ASSET + 'wood_floor_diff_1k.jpg',   t => { this.floorMat.map = set(t, true);  this.floorMat.color.set(0xffffff); this.floorMat.needsUpdate = true; });
+      L.load(ASSET + 'wood_floor_nor_gl_1k.jpg', t => { this.floorMat.normalMap = set(t, false); this.floorMat.needsUpdate = true; });
+      L.load(ASSET + 'wood_floor_rough_1k.jpg',  t => { this.floorMat.roughnessMap = set(t, false); this.floorMat.needsUpdate = true; });
+    }
+
+    /* ── Props decorativos GLB (planta + jarrón) ─────────── */
+    _loadProps() {
+      const loader = new GLTFLoader();
+      /* Planta en maceta, en el piso (rincón frente-derecha, espacio libre) */
+      this._loadProp(loader, ASSET + 'potted_plant_01/potted_plant_01_1k.gltf',
+        { targetH: 0.85, x: 1.35, z: 0.55, onFloor: true });
+      /* Jarrón sobre la mesada principal (sector libre) */
+      this._loadProp(loader, ASSET + 'ceramic_vase_01/ceramic_vase_01_1k.gltf',
+        { targetH: 0.34, x: -0.1, z: -1.78, baseY: 0.925 });
+    }
+
+    _loadProp(loader, url, opt) {
+      loader.load(url, (gltf) => {
+        const obj = gltf.scene;
+        obj.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+        /* Normalizar tamaño por bounding box y apoyar la base */
+        const box = new THREE.Box3().setFromObject(obj);
+        const size = new THREE.Vector3(); box.getSize(size);
+        const ctr  = new THREE.Vector3(); box.getCenter(ctr);
+        const s = opt.targetH / (size.y || 1);
+        obj.scale.setScalar(s);
+        const baseY = opt.onFloor ? 0 : (opt.baseY || 0);
+        obj.position.set(
+          opt.x - ctr.x * s,
+          baseY - box.min.y * s,
+          opt.z - ctr.z * s
+        );
+        this.propsGroup.add(obj);
+      }, undefined, () => console.warn('[KitchenScene] no se pudo cargar prop:', url));
+    }
+
     /* ── Interno ─────────────────────────────────────────── */
     async _loadTex(url) {
       if (_texCache.has(url)) return _texCache.get(url);
@@ -549,6 +636,7 @@
 
     _animate() {
       this._animId = requestAnimationFrame(() => this._animate());
+      if (this.controls) this.controls.update();
       if (this.container.clientWidth > 0 && this.container.clientHeight > 0) {
         this.renderer.render(this.scene, this.camera);
       }
@@ -556,6 +644,9 @@
 
     destroy() {
       cancelAnimationFrame(this._animId);
+      if (this._idleTimer) clearTimeout(this._idleTimer);
+      if (this.controls) this.controls.dispose();
+      if (this._envMap) this._envMap.dispose();
       if (this._ro) this._ro.disconnect();
       this.renderer.dispose();
       if (this.renderer.domElement.parentNode === this.container) {
@@ -565,4 +656,3 @@
   }
 
   window.KitchenScene = KitchenScene;
-})();
