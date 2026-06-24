@@ -73,7 +73,7 @@ const ASSET = 'assets/3d/';
       this.renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
       this.renderer.outputColorSpace  = THREE.SRGBColorSpace;
       this.renderer.toneMapping       = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 0.82;
+      this.renderer.toneMappingExposure = 0.58;
       Object.assign(this.renderer.domElement.style, { width: '100%', height: '100%', display: 'block' });
       container.appendChild(this.renderer.domElement);
 
@@ -148,7 +148,7 @@ const ASSET = 'assets/3d/';
 
     /* ── Helpers ─────────────────────────────────────────── */
     _std(color, roughness = 0.8, metalness = 0) {
-      return new THREE.MeshStandardMaterial({ color, roughness, metalness });
+      return new THREE.MeshStandardMaterial({ color, roughness, metalness, envMapIntensity: 0.35 });
     }
     _box(w, h, d, mat, x, y, z, parent) {
       const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
@@ -189,7 +189,7 @@ const ASSET = 'assets/3d/';
       this.ambient = new THREE.AmbientLight(0xfbf4e8, 0.3);
       this.scene.add(this.ambient);
 
-      this.hemi = new THREE.HemisphereLight(0xfff6e6, 0x6b6258, 0.25);
+      this.hemi = new THREE.HemisphereLight(0xfff6e6, 0x6b6258, 0.1);
       this.scene.add(this.hemi);
 
       this.sun = new THREE.DirectionalLight(0xfff4e2, 1.0);
@@ -250,7 +250,7 @@ const ASSET = 'assets/3d/';
     /* ── Caparazón: piso, paredes, techo, ventana ────────── */
     _buildShell() {
       /* Piso — madera realista (textura PBR, carga async) */
-      this.floorMat = new THREE.MeshStandardMaterial({ color: 0xb59a78, roughness: 0.65, metalness: 0 });
+      this.floorMat = new THREE.MeshStandardMaterial({ color: 0xb59a78, roughness: 0.65, metalness: 0, envMapIntensity: 0.4 });
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(9, 9), this.floorMat);
       floor.rotation.x = -Math.PI / 2;
       floor.receiveShadow = true;
@@ -295,7 +295,7 @@ const ASSET = 'assets/3d/';
 
     /* ── Mesadas + backsplash (material de piedra mutable) ── */
     _buildCountertops() {
-      this.stoneMat = new THREE.MeshStandardMaterial({ color: 0xe8e2d8, roughness: 0.2, metalness: 0.04 });
+      this.stoneMat = new THREE.MeshStandardMaterial({ color: 0xe8e2d8, roughness: 0.2, metalness: 0.04, envMapIntensity: 0.6 });
 
       /* Mesada principal */
       const ctMain = this._box(2.96, 0.045, 0.66, this.stoneMat, -0.35, 0.9, -1.86, this.scene);
@@ -435,7 +435,7 @@ const ASSET = 'assets/3d/';
         M.map = color; M.normalMap = nor; M.roughnessMap = rough;
         M.normalScale.set(0.6, 0.6);
         M.color.set(0xffffff);
-        M.roughness = 1.0; M.metalness = 0.0; M.envMapIntensity = 1.1;
+        M.roughness = 1.0; M.metalness = 0.0; M.envMapIntensity = 0.6;
         M.needsUpdate = true;
       } else {
         /* Fallback: swatch del catálogo (con anisotropy) */
@@ -622,9 +622,9 @@ const ASSET = 'assets/3d/';
       off();
       switch (id) {
         case 'lum-interior':   // luz hogareña cálida
-          setPend(1.2, 0xffdca0); setPlafon(0.45, 0xffe8c4);
-          this.ambient.intensity = 0.36; this.ambient.color.set(0xffeede);
-          this.sun.intensity = 0.85; this.winLight.intensity = 0.5;
+          setPend(1.0, 0xffdca0); setPlafon(0.32, 0xffe8c4);
+          this.ambient.intensity = 0.16; this.ambient.color.set(0xffeede);
+          this.sun.intensity = 0.95; this.winLight.intensity = 0.3;
           break;
         case 'lum-led':        // blanco frío técnico
           setLed(1.4, 0xeaf4ff); setSpots(1.0, 0xf0f6ff);
