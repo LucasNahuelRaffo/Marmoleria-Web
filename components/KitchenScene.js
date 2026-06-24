@@ -73,7 +73,7 @@ const ASSET = 'assets/3d/';
       this.renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
       this.renderer.outputColorSpace  = THREE.SRGBColorSpace;
       this.renderer.toneMapping       = THREE.ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.0;
+      this.renderer.toneMappingExposure = 0.82;
       Object.assign(this.renderer.domElement.style, { width: '100%', height: '100%', display: 'block' });
       container.appendChild(this.renderer.domElement);
 
@@ -192,7 +192,7 @@ const ASSET = 'assets/3d/';
       this.hemi = new THREE.HemisphereLight(0xfff6e6, 0x6b6258, 0.25);
       this.scene.add(this.hemi);
 
-      this.sun = new THREE.DirectionalLight(0xfff4e2, 1.25);
+      this.sun = new THREE.DirectionalLight(0xfff4e2, 1.0);
       this.sun.position.set(3.2, 4.6, 2.6);
       this.sun.castShadow = true;
       this.sun.shadow.mapSize.set(2048, 2048);
@@ -205,7 +205,7 @@ const ASSET = 'assets/3d/';
       this.scene.add(this.sun);
 
       /* Luz cálida que entra por la ventana */
-      this.winLight = new THREE.PointLight(0xfff2dc, 0.8, 6, 1.8);
+      this.winLight = new THREE.PointLight(0xfff2dc, 0.55, 6, 1.8);
       this.winLight.position.set(1.2, 1.85, -2.05);
       this.scene.add(this.winLight);
     }
@@ -235,8 +235,8 @@ const ASSET = 'assets/3d/';
         this.composer.addPass(gtao);
         this._gtao = gtao;
 
-        /* Bloom suave → solo las luminarias muy brillantes destellan */
-        const bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.32, 0.55, 0.85);
+        /* Bloom suave → solo los emisores reales destellan (no las paredes) */
+        const bloom = new UnrealBloomPass(new THREE.Vector2(w, h), 0.16, 0.4, 1.05);
         this.composer.addPass(bloom);
 
         /* OutputPass aplica tone mapping + sRGB al canvas (una sola vez) */
@@ -622,9 +622,9 @@ const ASSET = 'assets/3d/';
       off();
       switch (id) {
         case 'lum-interior':   // luz hogareña cálida
-          setPend(1.3, 0xffdca0); setPlafon(0.5, 0xffe8c4);
-          this.ambient.intensity = 0.5; this.ambient.color.set(0xffeede);
-          this.sun.intensity = 1.0; this.winLight.intensity = 0.7;
+          setPend(1.2, 0xffdca0); setPlafon(0.45, 0xffe8c4);
+          this.ambient.intensity = 0.36; this.ambient.color.set(0xffeede);
+          this.sun.intensity = 0.85; this.winLight.intensity = 0.5;
           break;
         case 'lum-led':        // blanco frío técnico
           setLed(1.4, 0xeaf4ff); setSpots(1.0, 0xf0f6ff);

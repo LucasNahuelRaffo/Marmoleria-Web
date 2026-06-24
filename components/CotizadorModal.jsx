@@ -68,7 +68,8 @@ function SwatchGrid({ items, selected, onPick, onEnter, onLeave, isMobile }) {
 
 /* ── Componente principal ────────────────────────────────────────────────── */
 
-function CotizadorModal({ context = 'all', onClose }) {
+function CotizadorModal({ context = 'all', view = '3d', onClose }) {
+  const is3D = view === '3d';
   const initSlot = context === 'muebles'      ? 'mueble'
                  : context === 'herrajes'     ? 'herraje'
                  : context === 'electricidad' ? 'ilum'
@@ -147,20 +148,20 @@ function CotizadorModal({ context = 'all', onClose }) {
   const pickSurf = (item) => {
     setSurface({ tabKey: surfTab, item });
     setPreview(null);
-    sceneInstRef.current?.setStoneMaterial(item);
+    if (is3D) sceneInstRef.current?.setStoneMaterial(item);
   };
 
   const hoverSurf = (item) => {
     if (!isMobile) {
       setPreview(item);
-      sceneInstRef.current?.setStoneMaterial(item);
+      if (is3D) sceneInstRef.current?.setStoneMaterial(item);
     }
   };
 
   const leaveSurf = () => {
     if (!isMobile) {
       setPreview(null);
-      sceneInstRef.current?.setStoneMaterial(surface?.item || null);
+      if (is3D) sceneInstRef.current?.setStoneMaterial(surface?.item || null);
     }
   };
 
@@ -226,6 +227,7 @@ function CotizadorModal({ context = 'all', onClose }) {
   };
 
   const envItem = preview || surface?.item;
+  const envImg  = envItem ? (envItem.mesa || envItem.img) : null;
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
@@ -334,15 +336,25 @@ function CotizadorModal({ context = 'all', onClose }) {
           /* SELECTOR */
           ) : (
             <>
-              {/* Panel izquierdo — escena 3D */}
+              {/* Panel izquierdo — escena 3D (sección diseño) o foto del material (cards) */}
               <div style={{
                 flex: isMobile ? 'none' : '0 0 52%',
                 height: isMobile ? '260px' : 'auto',
                 position: 'relative', overflow: 'hidden',
-                background: '#1a1612', flexShrink: 0,
+                background: is3D ? '#1a1612' : '#08060A', flexShrink: 0,
               }}>
-                {/* Canvas Three.js — callback ref monta/desmonta la escena */}
-                <div ref={setSceneContainer} style={{ width: '100%', height: '100%' }} />
+                {is3D ? (
+                  /* Canvas Three.js — callback ref monta/desmonta la escena */
+                  <div ref={setSceneContainer} style={{ width: '100%', height: '100%' }} />
+                ) : (
+                  envImg && (
+                    <img
+                      key={envItem.id + (preview ? '-p' : '-s')}
+                      src={envImg} alt={envItem.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
+                    />
+                  )
+                )}
 
                 {/* Gradiente inferior para legibilidad de texto */}
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,5,3,0.82) 0%, rgba(6,5,3,0.1) 45%, transparent 100%)', pointerEvents: 'none' }} />
@@ -376,7 +388,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', textAlign: 'center', pointerEvents: 'none' }}>
                     <div style={{ fontSize: '52px', opacity: 0.12, marginBottom: '16px', lineHeight: 1 }}>◈</div>
                     <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '13px', color: 'rgba(245,240,230,0.22)', lineHeight: 1.7 }}>
-                      Elegí una superficie<br/>para ver el material en la cocina
+                      Elegí una superficie<br/>para ver el material{is3D ? ' en la cocina' : ''}
                     </p>
                   </div>
                 )}
@@ -399,10 +411,12 @@ function CotizadorModal({ context = 'all', onClose }) {
                   </div>
                 )}
 
-                {/* Badge 3D */}
-                <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(11,11,15,0.65)', backdropFilter: 'blur(6px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '50px', padding: '4px 10px', pointerEvents: 'none' }}>
-                  <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(212,175,55,0.8)', letterSpacing: '0.12em' }}>VISTA 3D</span>
-                </div>
+                {/* Badge 3D (solo en modo escena) */}
+                {is3D && (
+                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(11,11,15,0.65)', backdropFilter: 'blur(6px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '50px', padding: '4px 10px', pointerEvents: 'none' }}>
+                    <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(212,175,55,0.8)', letterSpacing: '0.12em' }}>VISTA 3D</span>
+                  </div>
+                )}
               </div>
 
               {/* Panel derecho — acordeón */}
