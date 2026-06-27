@@ -167,7 +167,7 @@ function App() {
   const openCotizador = (context = 'all', view = 'images') => {
     setInfoSection(null);
     setCotizadorContext(context || 'all');
-    setCotizadorView(view);
+    setCotizadorView(view || 'images');
     setCotizadorOpen(true);
   };
 
