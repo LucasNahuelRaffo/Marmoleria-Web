@@ -86,6 +86,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   const [step,     setStep]     = useState('select');
   const [form,     setForm]     = useState({ nombre: '', telefono: '', email: '', metros: '', descripcion: '' });
   const [sent,     setSent]     = useState(false);
+  const [colorIdx, setColorIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   /* ── Three.js refs ── */
@@ -228,7 +229,12 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
 
   const isHerrajeView = context === 'herrajes' || openSlot === 'herraje';
   const envItem = preview || (isHerrajeView ? herraje : surface?.item);
-  const envImg  = envItem ? (envItem.mesa || envItem.img) : null;
+  const colorList  = envItem?.colors;
+  const activeColor = colorList ? colorList[colorIdx % colorList.length] : null;
+  const envImg  = envItem ? (activeColor?.mesa || envItem.mesa || envItem.img) : null;
+
+  // Resetear el color activo cuando cambia el item mostrado
+  useEffect(() => { setColorIdx(0); }, [envItem?.id]);
 
   /* ── Render ─────────────────────────────────────────────────────────────── */
   return (
@@ -350,11 +356,45 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                 ) : (
                   envImg && (
                     <img
-                      key={envItem.id + (preview ? '-p' : '-s')}
+                      key={envItem.id + (preview ? '-p' : '-s') + '-' + colorIdx}
                       src={envImg} alt={envItem.name}
                       style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
                     />
                   )
+                )}
+
+                {/* Switcher de colores (ej: Manijón) — solo modo cards */}
+                {!is3D && colorList && colorList.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setColorIdx(i => (i - 1 + colorList.length) % colorList.length)}
+                      aria-label="Color anterior"
+                      style={{
+                        position: 'absolute', top: '50%', left: '12px', transform: 'translateY(-50%)',
+                        width: '36px', height: '36px', borderRadius: '50%', zIndex: 3, cursor: 'pointer',
+                        background: 'rgba(11,11,15,0.7)', backdropFilter: 'blur(6px)',
+                        border: '1px solid rgba(212,175,55,0.35)', color: '#D4AF37',
+                        fontSize: '18px', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'border-color 0.2s, background 0.2s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#D4AF37'; e.currentTarget.style.background = 'rgba(11,11,15,0.9)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)'; e.currentTarget.style.background = 'rgba(11,11,15,0.7)'; }}
+                    >‹</button>
+                    <button
+                      onClick={() => setColorIdx(i => (i + 1) % colorList.length)}
+                      aria-label="Color siguiente"
+                      style={{
+                        position: 'absolute', top: '50%', right: '12px', transform: 'translateY(-50%)',
+                        width: '36px', height: '36px', borderRadius: '50%', zIndex: 3, cursor: 'pointer',
+                        background: 'rgba(11,11,15,0.7)', backdropFilter: 'blur(6px)',
+                        border: '1px solid rgba(212,175,55,0.35)', color: '#D4AF37',
+                        fontSize: '18px', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        transition: 'border-color 0.2s, background 0.2s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#D4AF37'; e.currentTarget.style.background = 'rgba(11,11,15,0.9)'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(212,175,55,0.35)'; e.currentTarget.style.background = 'rgba(11,11,15,0.7)'; }}
+                    >›</button>
+                  </>
                 )}
 
                 {/* Gradiente inferior para legibilidad de texto */}
@@ -369,6 +409,11 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                           ? 'Herraje Premium'
                           : (surface ? (surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
                       </p>
+                    )}
+                    {!is3D && activeColor && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '8px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '50px', padding: '4px 12px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', letterSpacing: '0.08em', color: '#D4AF37' }}>
+                        Color: {activeColor.name} ({(colorIdx % colorList.length) + 1}/{colorList.length})
+                      </span>
                     )}
                     <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '20px' : '28px', fontWeight: 700, color: '#F5F0E6', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
                       {envItem.name}
