@@ -43,55 +43,28 @@ window.MATERIALS_DATA = {
     { id: 'vanitory-sencillo', name: 'Sencillo', img: 'images/vanitorys/vanitory-blanco-sencillo.webp' },
   ],
   herrajes: [
-    {
-      id: 'cerradura-base-cuadrada',
-      name: 'Cerradura Base Cuadrada',
-      img: 'images/imagenes seleccion herrajes/image.png_202606302111.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Cerradura_con_base_cuadrada_202606302124.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'elegant-wood-black-handle',
-      name: 'Puerta Elegante Manija Negra',
-      img: 'images/imagenes seleccion herrajes/image.png_202607010236.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_black_handle_202607010253.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'elegant-wood-metal-handle-1',
-      name: 'Puerta Elegante Manija Metálica 1',
-      img: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292040.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010253.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'elegant-wood-metal-handle-2',
-      name: 'Puerta Elegante Manija Metálica 2',
-      img: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292043.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010254.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'wood-door-polished-knob',
-      name: 'Pomo Pulido Madera',
-      img: 'images/imagenes seleccion herrajes/image.png_202607010239.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Wooden_door_with_polished_knob_202607010300.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'puerta-madera-herraje-1',
-      name: 'Herraje Moderno de Hierro',
-      img: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292010.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606292255.jpeg',
-      fit: 'contain'
-    },
-    {
-      id: 'puerta-madera-herraje-2',
-      name: 'Herraje Negro Minimalista',
-      img: 'images/imagenes seleccion herrajes/image.png_202607010025.jpeg',
-      mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606302056.jpeg',
-      fit: 'contain'
-    }
+    { id: 'h-083-biselada',   name: 'Manija Biselada',        img: 'images/Herrajes/art0083_manija-biselada-de_02.webp', mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010253.jpeg', fit: 'contain' },
+    { id: 'h-083-sn',         name: 'Manija 083',             img: 'images/Herrajes/art0083_s-n_02.webp',               mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010254.jpeg', fit: 'contain' },
+    { id: 'h-098',            name: 'Manija Ministerio 098',  img: 'images/Herrajes/art0098_manijas-ministerio_01.webp', mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606292255.jpeg', fit: 'contain' },
+    { id: 'h-099',            name: 'Manija Biselada 099',    img: 'images/Herrajes/art0099_manijas-biseladas_01.webp',  mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606302056.jpeg', fit: 'contain' },
+    { id: 'h-101',            name: 'Manija 101',             img: 'images/Herrajes/art0101_manija.webp',                mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_black_handle_202607010253.jpeg', fit: 'contain' },
+    { id: 'h-104',            name: 'Manija Giratoria',       img: 'images/Herrajes/art0104_manija-giratoria_01.webp',   mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010253.jpeg', fit: 'contain' },
+    { id: 'h-106',            name: 'Manija Ministerio 106',  img: 'images/Herrajes/art0106_manija-ministerio.webp',     mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606292255.jpeg', fit: 'contain' },
+    { id: 'h-107',            name: 'Manija Biselada 107',    img: 'images/Herrajes/art0107_manija-biselada.webp',       mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606302056.jpeg', fit: 'contain' },
+    { id: 'h-116',            name: 'Lanín',                  img: 'images/Herrajes/art0116_lanin_02.webp',              mesa: 'images/imagenes seleccion herrajes/Wooden_door_with_polished_knob_202607010300.jpeg', fit: 'contain' },
+    { id: 'h-142-alerce',     name: 'Manija Alerce 142',      img: 'images/Herrajes/art0142_manija-alerce_01.webp',      mesa: 'images/imagenes seleccion herrajes/Cerradura_con_base_cuadrada_202606302124.jpeg', fit: 'contain' },
+    { id: 'h-142-alerce-set', name: 'Manijas Alerce (set)',   img: 'images/Herrajes/art0142_manijas-alerce_02.webp',     mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_black_handle_202607010253.jpeg', fit: 'contain' },
+    { id: 'h-143',            name: 'Manija Alerce 143',      img: 'images/Herrajes/art0143_manija-alerce_02.webp',      mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010254.jpeg', fit: 'contain' },
+    { id: 'h-175',            name: 'Manija Trafúl 175',      img: 'images/Herrajes/art0175_manija-traful_02.webp',      mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280328.jpeg', fit: 'contain' },
+    { id: 'h-176',            name: 'Manija Trafúl 176',      img: 'images/Herrajes/art0176_manija-traful_01.webp',      mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280330.jpeg', fit: 'contain' },
+    { id: 'h-180',            name: 'Jacarandá Doble',        img: 'images/Herrajes/art0180_jacaranda-doble_02.webp',    mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280331.jpeg', fit: 'contain' },
+    { id: 'h-351',            name: 'Manija Sanatorio',       img: 'images/Herrajes/art0351_manija-sanatorio_01.webp',   mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280334.jpeg', fit: 'contain' },
+    { id: 'h-503',            name: 'Manija 503',             img: 'images/Herrajes/art0503_manija.webp',                mesa: 'images/imagenes seleccion herrajes/Una_casa_moderna_y_elegante,_202606302147.jpeg', fit: 'contain' },
+    { id: 'h-506',            name: 'Manijas Biseladas',      img: 'images/Herrajes/art0506_manijas-biseladas_02.webp',  mesa: 'images/imagenes seleccion herrajes/Wooden_door_with_polished_knob_202607010300.jpeg', fit: 'contain' },
+    { id: 'h-910',            name: 'Manijón 140cm',          img: 'images/Herrajes/art0910_manijon-de-140_02.webp',     mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010253.jpeg', fit: 'contain' },
+    { id: 'h-911',            name: 'Manijón 220cm',          img: 'images/Herrajes/art0911_manijon-de-220_02.webp',     mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010254.jpeg', fit: 'contain' },
+    { id: 'h-912',            name: 'Manijón 250cm',          img: 'images/Herrajes/art0912_manijon-de-250_02.webp',     mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606302056.jpeg', fit: 'contain' },
+    { id: 'h-2085',           name: 'Herraje 2085',           img: 'images/Herrajes/art2085_s-n_02.webp',               mesa: 'images/imagenes seleccion herrajes/Cerradura_con_base_cuadrada_202606302124.jpeg', fit: 'contain' },
   ],
   iluminacion: [
     { id: 'lum-interior',    name: 'Luminación Interior',  img: 'images/electricidad-hero.webp' },
