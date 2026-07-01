@@ -47,7 +47,7 @@ window.MATERIALS_DATA = {
     { id: 'h-083-sn',         name: 'Manija 083',             img: 'images/Herrajes/art0083_s-n_02.webp',               mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280328.jpeg', fit: 'contain' },
     { id: 'h-098',            name: 'Manija Ministerio 098',  img: 'images/Herrajes/art0098_manijas-ministerio_01.webp', mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280330.jpeg', fit: 'contain' },
     { id: 'h-099',            name: 'Manija Biselada 099',    img: 'images/Herrajes/art0099_manijas-biseladas_01.webp',  mesa: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292040.jpeg', fit: 'contain', mesaFit: 'contain' },
-    { id: 'h-101',            name: 'Manija 101',             img: 'images/Herrajes/art0101_manija.webp',                mesa: 'images/imagenes seleccion herrajes/image.png_202607010025.jpeg', fit: 'contain' },
+    { id: 'h-101',            name: 'Manija 101',             img: 'images/Herrajes/art0101_manija.webp',                mesa: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292010.jpeg', fit: 'contain' },
     { id: 'h-106',            name: 'Manija Ministerio 106',  img: 'images/Herrajes/art0106_manija-ministerio.webp',     mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607012012.jpeg', fit: 'contain' },
     { id: 'h-107',            name: 'Manija Biselada 107',    img: 'images/Herrajes/art0107_manija-biselada.webp',       mesa: 'images/imagenes seleccion herrajes/image.png_202607010236.jpeg', fit: 'contain' },
     { id: 'h-116',            name: 'Lanín',                  img: 'images/Herrajes/art0116_lanin_02.webp',              mesa: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292043.jpeg', fit: 'contain' },
@@ -55,7 +55,7 @@ window.MATERIALS_DATA = {
     { id: 'h-142-alerce-set', name: 'Manijas Alerce (set)',   img: 'images/Herrajes/art0142_manijas-alerce_02.webp',     mesa: 'images/imagenes seleccion herrajes/Puerta_de_madera_con_herraje_202606302056.jpeg', fit: 'contain' },
     { id: 'h-175',            name: 'Manija Trafúl 175',      img: 'images/Herrajes/art0175_manija-traful_02.webp',      mesa: 'images/imagenes seleccion herrajes/image.png_202606302111.jpeg', fit: 'contain' },
     { id: 'h-180',            name: 'Jacarandá Doble',        img: 'images/Herrajes/art0180_jacaranda-doble_02.webp',    mesa: 'images/imagenes seleccion herrajes/image.png_202606302111.jpeg', fit: 'contain' },
-    { id: 'h-351',            name: 'Manija Sanatorio',       img: 'images/Herrajes/art0351_manija-sanatorio_01.webp',   mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280330.jpeg', fit: 'contain' },
+    { id: 'h-351',            name: 'Manija Sanatorio',       img: 'images/Herrajes/art0351_manija-sanatorio_01.webp',   mesa: 'images/imagenes seleccion herrajes/image.png_202607010025.jpeg', fit: 'contain' },
     { id: 'h-506',            name: 'Manijas Biseladas',      img: 'images/Herrajes/art0506_manijas-biseladas_02.webp',  mesa: 'images/imagenes seleccion herrajes/image.png_202607010239.jpeg', fit: 'contain' },
     { id: 'h-910',            name: 'Manijón 140cm',          img: 'images/Herrajes/art0910_manijon-de-140_02.webp',     mesa: 'images/imagenes seleccion herrajes/Elegant_wooden_door_metal_handle_202607010253.jpeg', fit: 'contain',
       colors: [
