@@ -43,7 +43,7 @@ window.MATERIALS_DATA = {
     { id: 'vanitory-sencillo', name: 'Sencillo', img: 'images/vanitorys/vanitory-blanco-sencillo.webp' },
   ],
   herrajes: [
-    { id: 'h-083-biselada',   name: 'Manija Biselada',        img: 'images/Herrajes/art0083_manija-biselada-de_02.webp', mesa: 'images/imagenes seleccion herrajes/Una_casa_moderna_y_elegante,_202606302147.jpeg', fit: 'contain' },
+    { id: 'h-083-biselada',   name: 'Manija Biselada',        img: 'images/Herrajes/art0083_manija-biselada-de_02.webp', mesa: 'images/imagenes seleccion herrajes/Metal_door_with_handle_202607012030.jpeg', fit: 'contain' },
     { id: 'h-083-sn',         name: 'Manija 083',             img: 'images/Herrajes/art0083_s-n_02.webp',               mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280328.jpeg', fit: 'contain' },
     { id: 'h-098',            name: 'Manija Ministerio 098',  img: 'images/Herrajes/art0098_manijas-ministerio_01.webp', mesa: 'images/imagenes seleccion herrajes/Empty_house_wooden_door_202606280330.jpeg', fit: 'contain' },
     { id: 'h-099',            name: 'Manija Biselada 099',    img: 'images/Herrajes/art0099_manijas-biseladas_01.webp',  mesa: 'images/imagenes seleccion herrajes/art0104_manija-giratoria_02.png_202606292040.jpeg', fit: 'contain', mesaFit: 'contain' },
