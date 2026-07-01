@@ -358,7 +358,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                     <img
                       key={envItem.id + (preview ? '-p' : '-s') + '-' + colorIdx}
                       src={envImg} alt={envItem.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
+                      style={{ width: '100%', height: '100%', objectFit: envItem.mesaFit || 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
                     />
                   )
                 )}
