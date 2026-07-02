@@ -228,7 +228,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   };
 
   const isHerrajeView = context === 'herrajes' || openSlot === 'herraje';
-  const envItem = preview || (isHerrajeView ? herraje : surface?.item);
+  const isIlumView = context === 'electricidad' || openSlot === 'ilum';
+  const envItem = preview || (isHerrajeView ? herraje : isIlumView ? ilum : surface?.item);
   const colorList  = envItem?.colors;
   const activeColor = colorList ? colorList[colorIdx % colorList.length] : null;
   const envImg  = envItem ? (activeColor?.mesa || envItem.mesa || envItem.img) : null;
@@ -407,6 +408,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                       <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
                         {isHerrajeView
                           ? 'Herraje Premium'
+                          : isIlumView
+                          ? 'Electricidad y Luminación'
                           : (surface ? (surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
                       </p>
                     )}
@@ -423,7 +426,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                         Vista previa · click para seleccionar
                       </p>
                     )}
-                    {((isHerrajeView && herraje) || (!isHerrajeView && surface)) && !preview && (
+                    {((isHerrajeView && herraje) || (isIlumView && ilum) || (!isHerrajeView && !isIlumView && surface)) && !preview && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '50px', padding: '4px 10px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: '#D4AF37' }}>
                         ✓ Seleccionado
                       </span>
@@ -438,6 +441,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                     <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '13px', color: 'rgba(245,240,230,0.22)', lineHeight: 1.7 }}>
                       {isHerrajeView
                         ? 'Elegí un herraje\npara ver el detalle en la puerta'
+                        : isIlumView
+                        ? 'Elegí un producto\npara ver el detalle'
                         : `Elegí una superficie\npara ver el material${is3D ? ' en la cocina' : ''}`}
                     </p>
                   </div>
