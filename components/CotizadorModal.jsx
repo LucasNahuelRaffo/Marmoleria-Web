@@ -209,9 +209,16 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
     );
   };
 
-  const isHerrajeView = context === 'herrajes' || openSlot === 'herraje';
-  const isIlumView = context === 'electricidad' || openSlot === 'ilum';
-  const isMuebleView = context === 'muebles' || openSlot === 'mueble';
+  // El panel grande sigue la sección que el usuario tiene abierta; si cerró
+  // todos los acordeones, muestra la última selección disponible (para no
+  // perder de vista lo elegido al agregar más de un elemento al proyecto).
+  const currentFocus = ['herraje', 'ilum', 'mueble', 'surf'].includes(openSlot)
+    ? openSlot
+    : (herraje ? 'herraje' : ilum ? 'ilum' : mueble ? 'mueble' : surface ? 'surf' : null);
+
+  const isHerrajeView = currentFocus === 'herraje';
+  const isIlumView = currentFocus === 'ilum';
+  const isMuebleView = currentFocus === 'mueble';
   const envItem = isHerrajeView ? herraje : isIlumView ? ilum : isMuebleView ? mueble : surface?.item;
   const colorList  = envItem?.colors;
   const activeColor = colorList ? colorList[colorIdx % colorList.length] : null;
@@ -426,10 +433,11 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   </div>
                 )}
 
-                {/* Chips selecciones activas (mueble/herraje/ilum) */}
-                {[mueble && { item: mueble, label: 'Mueble' }, herraje && { item: herraje, label: 'Herraje' }, ilum && { item: ilum, label: 'Iluminación' }].filter(Boolean).length > 0 && (
+                {/* Chips con todas las selecciones activas del proyecto */}
+                {[surface && { item: surface.item, label: 'Superficie' }, mueble && { item: mueble, label: 'Mueble' }, herraje && { item: herraje, label: 'Herraje' }, ilum && { item: ilum, label: 'Iluminación' }].filter(Boolean).length > 0 && (
                   <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'none' }}>
                     {[
+                      surface && { item: surface.item, label: 'Superficie'  },
                       mueble  && { item: mueble,  label: 'Mueble'      },
                       herraje && { item: herraje, label: 'Herraje'     },
                       ilum    && { item: ilum,    label: 'Iluminación' },
