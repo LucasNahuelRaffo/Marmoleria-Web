@@ -32,7 +32,7 @@ function SubTabs({ tabs, active, onChange }) {
   );
 }
 
-function SwatchGrid({ items, selected, onPick, onEnter, onLeave, isMobile }) {
+function SwatchGrid({ items, selected, onPick, isMobile }) {
   const sz = isMobile ? '50px' : '56px';
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: '10px', padding: '14px' }}>
@@ -41,8 +41,6 @@ function SwatchGrid({ items, selected, onPick, onEnter, onLeave, isMobile }) {
         return (
           <div key={item.id}
             onClick={() => onPick(item)}
-            onMouseEnter={() => onEnter && onEnter(item)}
-            onMouseLeave={() => onLeave && onLeave()}
             style={{ cursor: 'pointer', textAlign: 'center' }}>
             <div style={{
               width: sz, height: sz, borderRadius: '50%', overflow: 'hidden',
@@ -77,7 +75,6 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
 
   const [surface,  setSurface]  = useState(null);
   const [surfTab,  setSurfTab]  = useState('marmoles');
-  const [preview,  setPreview]  = useState(null);
   const [mueble,   setMueble]   = useState(null);
   const [mblTab,   setMblTab]   = useState('cocinas');
   const [herraje,  setHerraje]  = useState(null);
@@ -148,22 +145,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
 
   const pickSurf = (item) => {
     setSurface({ tabKey: surfTab, item });
-    setPreview(null);
     if (is3D) sceneInstRef.current?.setStoneMaterial(item);
-  };
-
-  const hoverSurf = (item) => {
-    if (!isMobile) {
-      setPreview(item);
-      if (is3D) sceneInstRef.current?.setStoneMaterial(item);
-    }
-  };
-
-  const leaveSurf = () => {
-    if (!isMobile) {
-      setPreview(null);
-      if (is3D) sceneInstRef.current?.setStoneMaterial(surface?.item || null);
-    }
   };
 
   const sInput = {
@@ -229,7 +211,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
 
   const isHerrajeView = context === 'herrajes' || openSlot === 'herraje';
   const isIlumView = context === 'electricidad' || openSlot === 'ilum';
-  const envItem = preview || (isHerrajeView ? herraje : isIlumView ? ilum : surface?.item);
+  const isMuebleView = context === 'muebles' || openSlot === 'mueble';
+  const envItem = isHerrajeView ? herraje : isIlumView ? ilum : isMuebleView ? mueble : surface?.item;
   const colorList  = envItem?.colors;
   const activeColor = colorList ? colorList[colorIdx % colorList.length] : null;
   const envImg  = envItem ? (activeColor?.mesa || envItem.mesa || envItem.img) : null;
@@ -357,7 +340,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                 ) : (
                   envImg && (
                     <img
-                      key={envItem.id + (preview ? '-p' : '-s') + '-' + colorIdx}
+                      key={envItem.id + '-' + colorIdx}
                       src={envImg} alt={envItem.name}
                       style={{ width: '100%', height: '100%', objectFit: envItem.mesaFit || 'cover', objectPosition: 'center', display: 'block', animation: 'fadein 0.35s ease' }}
                     />
@@ -401,18 +384,18 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                 {/* Gradiente inferior para legibilidad de texto */}
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(6,5,3,0.82) 0%, rgba(6,5,3,0.1) 45%, transparent 100%)', pointerEvents: 'none' }} />
 
-                {/* Nombre del material seleccionado / en preview */}
+                {/* Nombre del material seleccionado */}
                 {envItem && (
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: isMobile ? '20px 16px 14px' : '36px 28px 22px', pointerEvents: 'none' }}>
-                    {!preview && (
-                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
-                        {isHerrajeView
-                          ? 'Herraje Premium'
-                          : isIlumView
-                          ? 'Electricidad y Luminación'
-                          : (surface ? (surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
-                      </p>
-                    )}
+                    <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: '#D4AF37', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>
+                      {isHerrajeView
+                        ? 'Herraje Premium'
+                        : isIlumView
+                        ? 'Electricidad y Luminación'
+                        : isMuebleView
+                        ? 'Mueble'
+                        : (surface ? (surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
+                    </p>
                     {!is3D && activeColor && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '8px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '50px', padding: '4px 12px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', letterSpacing: '0.08em', color: '#D4AF37' }}>
                         Color: {activeColor.name} ({(colorIdx % colorList.length) + 1}/{colorList.length})
@@ -421,16 +404,9 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                     <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '20px' : '28px', fontWeight: 700, color: '#F5F0E6', lineHeight: 1.1, letterSpacing: '-0.02em' }}>
                       {envItem.name}
                     </p>
-                    {preview && (
-                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: 'rgba(245,240,230,0.4)', marginTop: '4px', letterSpacing: '0.06em' }}>
-                        Vista previa · click para seleccionar
-                      </p>
-                    )}
-                    {((isHerrajeView && herraje) || (isIlumView && ilum) || (!isHerrajeView && !isIlumView && surface)) && !preview && (
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '50px', padding: '4px 10px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: '#D4AF37' }}>
-                        ✓ Seleccionado
-                      </span>
-                    )}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginTop: '8px', background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.4)', borderRadius: '50px', padding: '4px 10px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', color: '#D4AF37' }}>
+                      ✓ Seleccionado
+                    </span>
                   </div>
                 )}
 
@@ -443,6 +419,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                         ? 'Elegí un herraje\npara ver el detalle en la puerta'
                         : isIlumView
                         ? 'Elegí un producto\npara ver el detalle'
+                        : isMuebleView
+                        ? 'Elegí un mueble\npara ver el detalle'
                         : `Elegí una superficie\npara ver el material${is3D ? ' en la cocina' : ''}`}
                     </p>
                   </div>
@@ -485,7 +463,6 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                       <SubTabs tabs={SURF_TABS} active={surfTab} onChange={setSurfTab} />
                       <SwatchGrid
                         items={surfItems} selected={surface?.item} onPick={pickSurf}
-                        onEnter={hoverSurf} onLeave={leaveSurf}
                         isMobile={isMobile}
                       />
                     </div>
