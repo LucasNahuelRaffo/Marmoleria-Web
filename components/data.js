@@ -83,7 +83,7 @@ window.MATERIALS_DATA = {
     { id: 'lum-panel-embutir',name: 'Paneles LED Embutir',       img: 'images/Imagenes de luces/bien,_saca_el_folleto_ese_202607012159.jpeg', mesa: 'images/Imagenes de luces/bien,_saca_el_folleto_ese_202607012159.jpeg', fit: 'contain' },
     { id: 'lum-tanque',       name: 'Tanque de Expansión',       img: 'images/Imagenes de luces/bien,_saca_el_logo_y_202607021857.jpeg', mesa: 'images/Imagenes de luces/bien,_saca_el_logo_y_202607021857.jpeg', fit: 'contain' },
     { id: 'lum-estaca-solar', name: 'Estaca Solar LED',          img: 'images/Imagenes de luces/perfecto,_hacela_en_este_formato_202607021850.jpeg', mesa: 'images/Imagenes de luces/perfecto,_hacela_en_este_formato_202607021850.jpeg', fit: 'contain' },
-    { id: 'lum-herramientas', name: 'Herramientas de Medición',  img: 'images/Imagenes de luces/saca_el_foco._que_solo_202607012155.jpeg', mesa: 'images/Imagenes de luces/saca_el_foco._que_solo_202607012155.jpeg', fit: 'contain' },
+    { id: 'lum-herramientas', name: 'Herramientas de Medición',  img: 'images/Imagenes de luces/saca_el_foco._que_solo_202607012155.jpeg', mesa: 'images/Imagenes de luces/saca_el_foco._que_solo_202607012155.jpeg', fit: 'contain', mesaPosition: 'center 68%' },
   ],
 };
 
