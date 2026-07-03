@@ -70,7 +70,7 @@ function Navbar({ onCotizarClick }) {
       transition: 'background 0.5s, backdrop-filter 0.5s, border-color 0.5s'
     }}>
       {/* Brand */}
-      <div style={{ position: 'relative', width: '110px', height: '34px', zIndex: 1100, flexShrink: 0 }}>
+      <div style={{ position: 'relative', width: '130px', height: '46px', zIndex: 1100, flexShrink: 0 }}>
         <img src="images/logo-blanco.png" alt="Marmolería"
           style={{
             position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
