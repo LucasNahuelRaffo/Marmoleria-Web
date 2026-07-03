@@ -70,14 +70,21 @@ function Navbar({ onCotizarClick }) {
       transition: 'background 0.5s, backdrop-filter 0.5s, border-color 0.5s'
     }}>
       {/* Brand */}
-      <div style={{
-        fontFamily: "'Figtree', sans-serif",
-        fontSize: '21px',
-        letterSpacing: '0.18em',
-        userSelect: 'none', fontWeight: "400", color: "rgb(218, 218, 218)",
-        zIndex: 1100
-      }}>
-        MARMOLERÍA
+      <div style={{ position: 'relative', width: '110px', height: '34px', zIndex: 1100, flexShrink: 0 }}>
+        <img src="images/logo-blanco.png" alt="Marmolería"
+          style={{
+            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+            objectFit: 'contain', objectPosition: 'left center',
+            opacity: scrolled || menuOpen ? 0 : 1,
+            transition: 'opacity 0.4s ease',
+          }} />
+        <img src="images/logo-dorado.png" alt="Marmolería"
+          style={{
+            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+            objectFit: 'contain', objectPosition: 'left center',
+            opacity: scrolled || menuOpen ? 1 : 0,
+            transition: 'opacity 0.4s ease',
+          }} />
       </div>
 
       {/* Center links - Hidden on mobile */}
