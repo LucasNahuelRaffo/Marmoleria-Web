@@ -20,6 +20,7 @@ function WhatsAppButton() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       aria-label="Contactar por WhatsApp"
+      data-guide="whatsapp"
       style={{
         position: 'fixed',
         bottom: '28px',
@@ -137,6 +138,7 @@ function PersonalizaTodo({ onCotizarClick }) {
           onClick={onCotizarClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          data-guide="personalizar"
           style={{
             background: hovered ? '#D4AF37' : 'transparent',
             color: hovered ? '#0B0B0F' : '#D4AF37',
@@ -213,7 +215,8 @@ function App() {
         onClose: closeInfo,
         onCotizar: openCotizador,
       }),
-      React.createElement(WhatsAppButton, null)
+      React.createElement(WhatsAppButton, null),
+      React.createElement(GuideTour, { hidden: cotizadorOpen || !!infoSection })
     )
   );
 }

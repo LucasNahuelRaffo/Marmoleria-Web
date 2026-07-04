@@ -104,6 +104,7 @@ function Navbar({ onCotizarClick }) {
       {!isMobile && (
         <button
           onClick={onCotizarClick}
+          data-guide="nav-cotizar"
           style={{
             background: 'transparent',
             border: '1.5px solid rgba(245,240,230,0.55)',

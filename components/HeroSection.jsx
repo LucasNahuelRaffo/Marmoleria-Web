@@ -101,6 +101,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
         {/* Ver más button */}
         <button
           onClick={(e) => { e.stopPropagation(); onVerMasClick(card.sectionId); }}
+          data-guide={index === 0 ? 'ver-detalles' : undefined}
           style={{
             background: 'rgba(212,175,55,0.12)',
             border: '1px solid rgba(212,175,55,0.4)',
@@ -228,6 +229,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
             <div
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
+              data-guide="hero-cards"
               style={{
               position: 'relative',
               height: '430px',
@@ -340,7 +342,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
           </div>
         ) : (
           /* 4 Glass Cards Grid on Desktop */
-          <div style={{
+          <div data-guide="hero-cards" style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '14px',
