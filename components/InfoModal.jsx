@@ -35,10 +35,12 @@ function InfoModal({ section, onClose, onCotizar }) {
         border: '1px solid rgba(255,255,255,0.14)',
         borderRadius: '28px',
         width: '100%', maxWidth: '960px',
-        maxHeight: isMobile ? '92vh' : '88vh',
-        display: 'flex', 
+        maxHeight: isMobile ? '92dvh' : '88dvh',
+        display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
         overflow: isMobile ? 'auto' : 'hidden',
+        overscrollBehavior: 'contain',
+        WebkitOverflowScrolling: 'touch',
         boxShadow: '0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)',
       }}>
         {/* Left — image */}

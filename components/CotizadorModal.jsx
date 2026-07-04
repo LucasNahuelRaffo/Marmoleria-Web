@@ -218,7 +218,7 @@ function CotizadorModal({ context = 'all', onClose }) {
       style={{ position: 'fixed', inset: 0, zIndex: 2000, background: 'rgba(11,11,15,0.92)', backdropFilter: 'blur(12px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '8px' : '16px' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div style={{ background: '#0F0F13', border: '1px solid rgba(212,175,55,0.18)', borderRadius: '8px', width: '100%', maxWidth: '1100px', height: isMobile ? '92vh' : '700px', maxHeight: '94vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.8)' }}>
+      <div style={{ background: '#0F0F13', border: '1px solid rgba(212,175,55,0.18)', borderRadius: '8px', width: '100%', maxWidth: '1100px', height: isMobile ? '92dvh' : '700px', maxHeight: '94dvh', display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 40px 100px rgba(0,0,0,0.8)' }}>
 
         {/* ── Header ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isMobile ? '14px 18px' : '16px 26px', borderBottom: '1px solid rgba(212,175,55,0.1)', flexShrink: 0 }}>
@@ -239,7 +239,7 @@ function CotizadorModal({ context = 'all', onClose }) {
         </div>
 
         {/* ── Body ── */}
-        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', flex: 1, overflow: isMobile ? 'auto' : 'hidden', minHeight: 0 }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', flex: 1, overflow: isMobile ? 'auto' : 'hidden', overscrollBehavior: isMobile ? 'contain' : 'auto', minHeight: 0 }}>
 
           {/* SUCCESS */}
           {sent ? (
