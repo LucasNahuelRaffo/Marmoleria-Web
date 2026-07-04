@@ -35,7 +35,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
       {/* Image area — tall, title overlaid */}
       <div style={{
         position: 'relative', height: '210px',
-        overflow: 'hidden', flexShrink: 0,
+        overflow: 'hidden', flexShrink: 0, background: '#0e0c09',
       }}>
         <img src={card.img} alt={card.title} style={{
           width: '100%', height: '100%', objectFit: 'cover',
@@ -62,7 +62,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
       {/* Body */}
       <div style={{
         padding: '18px 20px 22px',
-        display: 'flex', flexDirection: 'column', flex: 1,
+        display: 'flex', flexDirection: 'column', flex: 1, marginTop: '-1px',
       }}>
         {/* Subtitle */}
         <p style={{

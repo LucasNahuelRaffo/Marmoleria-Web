@@ -24,7 +24,7 @@ function ServiceCard({ section, onInfoClick, isMobile }) {
       }}>
       
       {/* Image top */}
-      <div style={{ position: 'relative', height: isMobile ? '190px' : '240px', overflow: 'hidden', flexShrink: 0 }}>
+      <div style={{ position: 'relative', height: isMobile ? '190px' : '240px', overflow: 'hidden', flexShrink: 0, background: '#0e0c09' }}>
         <img src={section.img} alt={section.title} style={{
           width: '100%', height: '100%', objectFit: 'cover',
           transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
@@ -62,7 +62,7 @@ function ServiceCard({ section, onInfoClick, isMobile }) {
       </div>
 
       {/* Body */}
-      <div style={{ padding: isMobile ? '18px 18px 20px' : '22px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+      <div style={{ padding: isMobile ? '18px 18px 20px' : '22px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1, marginTop: '-1px' }}>
         <p style={{
           fontFamily: "'Figtree', sans-serif",
           fontSize: '14px', lineHeight: 1.7,
