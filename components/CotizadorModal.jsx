@@ -43,22 +43,23 @@ function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
           <div key={item.id}
             onClick={() => onPick(item)}
             style={{ cursor: 'pointer', textAlign: 'center' }}>
-            <div style={{
-              width: sz, height: sz, borderRadius: '50%', overflow: 'hidden',
-              margin: '0 auto 5px', position: 'relative',
-              border: `${isActive ? '2.5px' : '2px'} solid ${isActive ? '#D4AF37' : isSel ? 'rgba(212,175,55,0.55)' : 'rgba(255,255,255,0.08)'}`,
-              transform: isActive ? 'scale(1.1)' : 'scale(1)',
-              boxShadow: isActive ? '0 0 0 3px rgba(212,175,55,0.2)' : 'none',
-              transition: 'all 0.18s',
-            }}>
-              <img src={item.img} alt={item.name} loading="lazy"
-                style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+            <div style={{ width: sz, height: sz, margin: '0 auto 5px', position: 'relative' }}>
+              <div style={{
+                width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden',
+                border: `${isActive ? '2.5px' : '2px'} solid ${isActive ? '#D4AF37' : isSel ? 'rgba(212,175,55,0.55)' : 'rgba(255,255,255,0.08)'}`,
+                transform: isActive ? 'scale(1.1)' : 'scale(1)',
+                boxShadow: isActive ? '0 0 0 3px rgba(212,175,55,0.2)' : 'none',
+                transition: 'all 0.18s',
+              }}>
+                <img src={item.img} alt={item.name} loading="lazy"
+                  style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+              </div>
               {isSel && (
                 <div style={{
-                  position: 'absolute', bottom: '-2px', right: '-2px', width: '18px', height: '18px',
+                  position: 'absolute', bottom: '-4px', right: '-4px', width: '18px', height: '18px',
                   borderRadius: '50%', background: '#D4AF37', border: '2px solid #0F0F13',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '9px', color: '#0B0B0F', fontWeight: 700, lineHeight: 1,
+                  fontSize: '9px', color: '#0B0B0F', fontWeight: 700, lineHeight: 1, zIndex: 1,
                 }}>✓</div>
               )}
             </div>
