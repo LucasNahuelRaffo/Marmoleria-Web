@@ -126,18 +126,34 @@ function SpotlightTour({ steps, active, onEnd, pageScroll }) {
     fontFamily: fontFam, fontSize: '12px', fontWeight: 500,
   };
 
-  /* Posición de la burbuja */
+  /* Posición de la burbuja: abajo → arriba → costado → centrada.
+     Los targets muy altos (paneles enteros) no dejan lugar ni arriba ni
+     abajo; ahí la burbuja va al costado con más espacio, y si tampoco hay
+     (mobile, targets de ancho completo) queda centrada en pantalla. */
   const vw = window.innerWidth, vh = window.innerHeight;
   const w = Math.min(360, vw - 32);
+  const EST_H = 215; // alto estimado de la burbuja
+  const centered = { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: w, zIndex: 10001 };
   let tooltipStyle;
   if (!step.target || !rect) {
-    tooltipStyle = { position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: w, zIndex: 10001 };
+    tooltipStyle = centered;
   } else {
-    const below = rect.top + rect.height + 190 < vh;
-    const left = Math.min(Math.max(16, rect.left + rect.width / 2 - w / 2), vw - w - 16);
-    tooltipStyle = below
-      ? { position: 'fixed', top: Math.min(rect.top + rect.height + 16, vh - 180), left, width: w, zIndex: 10001 }
-      : { position: 'fixed', bottom: Math.min(vh - rect.top + 16, vh - 100), left, width: w, zIndex: 10001 };
+    const spaceBelow = vh - (rect.top + rect.height);
+    const spaceAbove = rect.top;
+    const spaceLeft  = rect.left;
+    const spaceRight = vw - (rect.left + rect.width);
+    const clampLeft  = Math.min(Math.max(16, rect.left + rect.width / 2 - w / 2), vw - w - 16);
+    if (spaceBelow >= EST_H + 30) {
+      tooltipStyle = { position: 'fixed', top: rect.top + rect.height + 16, left: clampLeft, width: w, zIndex: 10001 };
+    } else if (spaceAbove >= EST_H + 30) {
+      tooltipStyle = { position: 'fixed', bottom: vh - rect.top + 16, left: clampLeft, width: w, zIndex: 10001 };
+    } else if (spaceLeft >= w + 32 || spaceRight >= w + 32) {
+      const left = spaceLeft >= spaceRight ? rect.left - w - 16 : rect.left + rect.width + 16;
+      const top = Math.max(16, Math.min(rect.top + 16, vh - EST_H - 16));
+      tooltipStyle = { position: 'fixed', top, left, width: w, zIndex: 10001 };
+    } else {
+      tooltipStyle = centered;
+    }
   }
 
   return (
