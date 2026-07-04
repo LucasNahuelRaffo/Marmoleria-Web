@@ -194,7 +194,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
         <div style={{
           flex: 1, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          textAlign: 'center', padding: isMobile ? '36px 0 24px' : '24px 0 32px',
+          textAlign: 'center', padding: isMobile ? '36px 0 24px' : '12px 0 18px',
         }}>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
             <h1 style={{
@@ -202,7 +202,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
               fontSize: isMobile ? '38px' : '76px', fontWeight: 300,
               letterSpacing: '-0.02em',
               color: '#F5F0E6', lineHeight: 1.1,
-              marginBottom: '18px', whiteSpace: isMobile ? 'normal' : 'nowrap',
+              marginBottom: isMobile ? '18px' : '10px', whiteSpace: isMobile ? 'normal' : 'nowrap',
               textShadow: '0 2px 40px rgba(0,0,0,0.45)',
             }}>
               Diseñá tu espacio ideal
@@ -344,7 +344,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
             gap: '14px',
-            paddingBottom: '44px',
+            paddingBottom: '20px',
             maxWidth: '1280px', margin: '0 auto', width: '100%',
           }}>
             {window.HERO_CARDS_DATA.map((card, i) => (
