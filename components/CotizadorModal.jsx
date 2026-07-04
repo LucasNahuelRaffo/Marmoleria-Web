@@ -1,4 +1,4 @@
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useEffect } = React;
 
 const SURF_TABS = [
   { key: 'marmoles',  label: 'Mármoles'  },
@@ -76,8 +76,7 @@ function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
 
 /* ── Componente principal ────────────────────────────────────────────────── */
 
-function CotizadorModal({ context = 'all', view = '3d', onClose }) {
-  const is3D = view === '3d';
+function CotizadorModal({ context = 'all', onClose }) {
   const initSlot = context === 'muebles'      ? 'mueble'
                  : context === 'herrajes'     ? 'herraje'
                  : context === 'electricidad' ? 'ilum'
@@ -106,54 +105,12 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   const activeHerraje      = herraje[herraje.length - 1] || null;
   const activeIlum         = ilum[ilum.length - 1]       || null;
 
-  /* ── Three.js refs ── */
-  const sceneInstRef     = useRef(null);
-  const currentSelRef    = useRef({ surface: null, mueble: null, herraje: null, ilum: null });
-  const sceneRetryRef    = useRef(null);
-
-  // Actualizar ref en cada render para que el callback ref lea valores frescos
-  currentSelRef.current = { surface: activeSurfaceEntry, mueble: activeMueble, herraje: activeHerraje, ilum: activeIlum };
-
-  // Callback ref: se ejecuta cuando el div del canvas monta/desmonta
-  const setSceneContainer = useCallback((node) => {
-    if (!node) {
-      if (sceneRetryRef.current) { clearTimeout(sceneRetryRef.current); sceneRetryRef.current = null; }
-      sceneInstRef.current?.destroy();
-      sceneInstRef.current = null;
-      return;
-    }
-    // KitchenScene es un módulo ES que carga async; reintentar hasta que esté listo
-    let tries = 0;
-    const tryInit = () => {
-      if (!node.isConnected) return;                 // el modal se cerró mientras esperaba
-      if (!window.KitchenScene) {
-        if (tries++ < 40) { sceneRetryRef.current = setTimeout(tryInit, 150); }
-        return;
-      }
-      const scene = new window.KitchenScene(node);
-      sceneInstRef.current = scene;
-      // Aplicar selecciones actuales (orden: mueble → superficie → herraje → luz)
-      const s = currentSelRef.current;
-      if (s.mueble)             scene.setFurniture(s.mueble.id);
-      if (s.surface?.item)      scene.setStoneMaterial(s.surface.item);
-      if (s.herraje)            scene.setHerraje(s.herraje.id);
-      if (s.ilum)               scene.setIluminacion(s.ilum.id);
-    };
-    tryInit();
-  }, []);
-
   useEffect(() => {
     const onR = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', onR);
     document.body.style.overflow = 'hidden';
     return () => { window.removeEventListener('resize', onR); document.body.style.overflow = ''; };
   }, []);
-
-  // Actualizar escena cuando cambia el mueble / herraje / ilum activo (el último tocado)
-  useEffect(() => { if (activeMueble)       sceneInstRef.current?.setFurniture(activeMueble.id);           }, [activeMueble]);
-  useEffect(() => { if (activeHerraje)      sceneInstRef.current?.setHerraje(activeHerraje.id);             }, [activeHerraje]);
-  useEffect(() => { if (activeIlum)         sceneInstRef.current?.setIluminacion(activeIlum.id);            }, [activeIlum]);
-  useEffect(() => { if (is3D && activeSurfaceEntry) sceneInstRef.current?.setStoneMaterial(activeSurfaceEntry.item); }, [activeSurfaceEntry, is3D]);
 
   const D        = window.MATERIALS_DATA;
   const surfItems = D[surfTab]      || [];
@@ -362,28 +319,23 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
           /* SELECTOR */
           ) : (
             <>
-              {/* Panel izquierdo — escena 3D (sección diseño) o foto del material (cards) */}
+              {/* Panel izquierdo — foto del material seleccionado */}
               <div style={{
                 flex: isMobile ? 'none' : '0 0 52%',
                 height: isMobile ? '260px' : 'auto',
                 position: 'relative', overflow: 'hidden',
-                background: is3D ? '#1a1612' : '#08060A', flexShrink: 0,
+                background: '#08060A', flexShrink: 0,
               }}>
-                {is3D ? (
-                  /* Canvas Three.js — callback ref monta/desmonta la escena */
-                  <div ref={setSceneContainer} style={{ width: '100%', height: '100%' }} />
-                ) : (
-                  envImg && (
-                    <img
-                      key={envItem.id + '-' + colorIdx}
-                      src={envImg} alt={envItem.name}
-                      style={{ width: '100%', height: '100%', objectFit: envItem.mesaFit || 'cover', objectPosition: envItem.mesaPosition || 'center', display: 'block', animation: 'fadein 0.35s ease' }}
-                    />
-                  )
+                {envImg && (
+                  <img
+                    key={envItem.id + '-' + colorIdx}
+                    src={envImg} alt={envItem.name}
+                    style={{ width: '100%', height: '100%', objectFit: envItem.mesaFit || 'cover', objectPosition: envItem.mesaPosition || 'center', display: 'block', animation: 'fadein 0.35s ease' }}
+                  />
                 )}
 
-                {/* Switcher de colores (ej: Manijón) — solo modo cards */}
-                {!is3D && colorList && colorList.length > 1 && (
+                {/* Switcher de colores (ej: Manijón) */}
+                {colorList && colorList.length > 1 && (
                   <>
                     <button
                       onClick={() => setColorIdx(i => (i - 1 + colorList.length) % colorList.length)}
@@ -431,7 +383,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                         ? 'Mueble'
                         : (activeSurfaceEntry ? (activeSurfaceEntry.tabKey === 'marmoles' ? 'Mármol' : activeSurfaceEntry.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
                     </p>
-                    {!is3D && activeColor && (
+                    {activeColor && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '8px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '50px', padding: '4px 12px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', letterSpacing: '0.08em', color: '#D4AF37' }}>
                         Color: {activeColor.name} ({(colorIdx % colorList.length) + 1}/{colorList.length})
                       </span>
@@ -456,7 +408,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                         ? 'Elegí un producto\npara ver el detalle'
                         : isMuebleView
                         ? 'Elegí un mueble\npara ver el detalle'
-                        : `Elegí una superficie\npara ver el material${is3D ? ' en la cocina' : ''}`}
+                        : 'Elegí una superficie\npara ver el material'}
                     </p>
                   </div>
                 )}
@@ -513,12 +465,6 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   </div>
                 )}
 
-                {/* Badge 3D (solo en modo escena) */}
-                {is3D && (
-                  <div style={{ position: 'absolute', top: '12px', right: '12px', background: 'rgba(11,11,15,0.65)', backdropFilter: 'blur(6px)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: '50px', padding: '4px 10px', pointerEvents: 'none' }}>
-                    <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(212,175,55,0.8)', letterSpacing: '0.12em' }}>VISTA 3D</span>
-                  </div>
-                )}
               </div>
 
               {/* Panel derecho — acordeón */}

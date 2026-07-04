@@ -160,14 +160,11 @@ function PersonalizaTodo({ onCotizarClick }) {
 function App() {
   const [cotizadorOpen, setCotizadorOpen] = useState(false);
   const [cotizadorContext, setCotizadorContext] = useState('all');
-  const [cotizadorView, setCotizadorView] = useState('images');
   const [infoSection, setInfoSection] = useState(null);
 
-  // view: 'images' (cards del hero, navbar, footer, info) | '3d' (sección "Diseñá cada rincón")
-  const openCotizador = (context = 'all', view = 'images') => {
+  const openCotizador = (context = 'all') => {
     setInfoSection(null);
     setCotizadorContext(context || 'all');
-    setCotizadorView(view || 'images');
     setCotizadorOpen(true);
   };
 
@@ -203,11 +200,10 @@ function App() {
       }),
       React.createElement(AboutSection, null),
       React.createElement(InfoSections, { onInfoClick: openInfo }),
-      React.createElement(PersonalizaTodo, { onCotizarClick: () => openCotizador('all', '3d') }),
+      React.createElement(PersonalizaTodo, { onCotizarClick: () => openCotizador('all') }),
       React.createElement(Footer, { onCotizarClick: () => openCotizador('all') }),
       cotizadorOpen && React.createElement(CotizadorModal, {
         context: cotizadorContext,
-        view: cotizadorView,
         onClose: closeCotizador,
       }),
       infoSection && React.createElement(InfoModal, {
