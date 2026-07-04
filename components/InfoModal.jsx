@@ -1,7 +1,8 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
 
 function InfoModal({ section, onClose, onCotizar }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const scrollBeforeOpen = useRef(0);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -10,11 +11,161 @@ function InfoModal({ section, onClose, onCotizar }) {
   }, []);
 
   useEffect(() => {
+    if (isMobile) {
+      // En mobile no fijamos el overlay ni bloqueamos el scroll: el contenido
+      // se muestra como una "página" más dentro del documento real, así el
+      // navegador puede ocultar su barra de direcciones al bajar, igual que
+      // en el resto del sitio (eso NO pasa dentro de un overlay con
+      // position:fixed, sin importar qué CSS se le ponga).
+      scrollBeforeOpen.current = window.scrollY;
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return () => { window.scrollTo({ top: scrollBeforeOpen.current, behavior: 'auto' }); };
+    }
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
-  }, []);
+  }, [isMobile]);
 
   if (!section) return null;
+
+  const CloseButton = (
+    <button onClick={onClose} style={{
+      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+      borderRadius: '50%', width: '34px', height: '34px',
+      cursor: 'pointer', color: 'rgba(245,240,230,0.5)', fontSize: '14px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'color 0.2s, border-color 0.2s',
+    }}
+    onMouseEnter={e => { e.currentTarget.style.color = '#F5F0E6'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
+    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(245,240,230,0.5)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; }}
+    >✕</button>
+  );
+
+  const InfoBody = (
+    <div style={{
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      padding: isMobile ? '22px 20px 32px' : '36px 36px 32px',
+      borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
+      borderTop: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none',
+      overflow: isMobile ? 'visible' : 'auto',
+    }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+        <div style={{
+          padding: '5px 16px', borderRadius: '50px',
+          background: 'rgba(212,175,55,0.1)',
+          border: '1px solid rgba(212,175,55,0.25)',
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '10px', fontWeight: 600,
+          letterSpacing: '0.16em', textTransform: 'uppercase',
+          color: '#D4AF37',
+        }}>Nuestros servicios</div>
+        {CloseButton}
+      </div>
+
+      <h2 style={{
+        fontFamily: "'Figtree', sans-serif",
+        fontSize: isMobile ? '26px' : 'clamp(28px, 3vw, 42px)',
+        fontWeight: 700, color: '#F5F0E6',
+        letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '8px',
+      }}>{section.title}</h2>
+
+      <div style={{ width: '40px', height: '2px', background: '#D4AF37', marginBottom: '20px' }} />
+
+      <p style={{
+        fontFamily: "'Figtree', sans-serif", fontSize: '14px',
+        lineHeight: 1.8, color: 'rgba(245,240,230,0.6)',
+        marginBottom: '24px',
+      }}>{section.description}</p>
+
+      {/* Features */}
+      <ul style={{ listStyle: 'none', marginBottom: '28px', flex: 1 }}>
+        {section.features.map((feat, i) => (
+          <li key={i} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            padding: '10px 0',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+          }}>
+            <span style={{ color: '#D4AF37', fontSize: '10px', flexShrink: 0 }}>◈</span>
+            <span style={{
+              fontFamily: "'Figtree', sans-serif", fontSize: '14px',
+              color: 'rgba(245,240,230,0.7)',
+            }}>{feat}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* CTA */}
+      <button
+        onClick={() => { onClose(); onCotizar(section.cotizadorContext); }}
+        style={{
+          background: '#D4AF37', color: '#0B0B0F',
+          border: 'none', borderRadius: '50px',
+          padding: '13px 32px', cursor: 'pointer',
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '14px', fontWeight: 600,
+          letterSpacing: '0.02em',
+          alignSelf: isMobile ? 'stretch' : 'flex-start',
+          textAlign: 'center',
+          boxShadow: '0 6px 20px rgba(212,175,55,0.3)',
+          transition: 'background 0.2s, transform 0.15s, box-shadow 0.2s',
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.background = '#e8c44a';
+          if (!isMobile) e.currentTarget.style.transform = 'translateY(-2px)';
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.background = '#D4AF37';
+          if (!isMobile) e.currentTarget.style.transform = 'translateY(0)';
+        }}
+      >
+        Cotizar este servicio →
+      </button>
+    </div>
+  );
+
+  const ImageBlock = (
+    <div style={{
+      flex: isMobile ? 'none' : '0 0 46%',
+      height: isMobile ? '220px' : 'auto',
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: isMobile ? '0' : '28px 0 0 28px',
+    }}>
+      <img src={section.img} alt={section.title} style={{
+        width: '100%', height: '100%', objectFit: 'cover', display: 'block',
+      }} />
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: isMobile ?
+          'linear-gradient(to bottom, transparent 40%, rgba(14,11,7,0.7) 100%)' :
+          'linear-gradient(to right, transparent 55%, rgba(14,11,7,0.7) 100%)',
+      }} />
+      {/* Bottom gold line */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        height: '2px', background: 'linear-gradient(to right, #D4AF37, transparent 60%)',
+      }} />
+    </div>
+  );
+
+  if (isMobile) {
+    // Vista mobile: toma-de-página completa dentro del documento real (sin
+    // position:fixed ni scroll interno), para que el scroll nativo permita
+    // al navegador ocultar su barra de direcciones al bajar.
+    return (
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 2000,
+        minHeight: '100dvh',
+        background: '#0e0c09',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        {ImageBlock}
+        {InfoBody}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -24,7 +175,7 @@ function InfoModal({ section, onClose, onCotizar }) {
         backdropFilter: 'blur(14px)',
         WebkitBackdropFilter: 'blur(14px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: isMobile ? '12px' : '20px',
+        padding: '20px',
       }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -35,130 +186,14 @@ function InfoModal({ section, onClose, onCotizar }) {
         border: '1px solid rgba(255,255,255,0.14)',
         borderRadius: '28px',
         width: '100%', maxWidth: '960px',
-        maxHeight: isMobile ? '92dvh' : '88dvh',
+        maxHeight: '88dvh',
         display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        overflow: isMobile ? 'auto' : 'hidden',
-        overscrollBehavior: 'contain',
-        WebkitOverflowScrolling: 'touch',
+        flexDirection: 'row',
+        overflow: 'hidden',
         boxShadow: '0 40px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.1)',
       }}>
-        {/* Left — image */}
-        <div style={{ 
-          flex: isMobile ? 'none' : '0 0 46%', 
-          height: isMobile ? '180px' : 'auto',
-          position: 'relative', 
-          overflow: 'hidden', 
-          borderRadius: isMobile ? '28px 28px 0 0' : '28px 0 0 28px' 
-        }}>
-          <img src={section.img} alt={section.title} style={{
-            width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-          }} />
-          <div style={{
-            position: 'absolute', inset: 0,
-            background: isMobile ? 
-              'linear-gradient(to bottom, transparent 40%, rgba(14,11,7,0.7) 100%)' :
-              'linear-gradient(to right, transparent 55%, rgba(14,11,7,0.7) 100%)',
-          }} />
-          {/* Bottom gold line */}
-          <div style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0,
-            height: '2px', background: 'linear-gradient(to right, #D4AF37, transparent 60%)',
-          }} />
-        </div>
-
-        {/* Right — info */}
-        <div style={{
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column',
-          padding: isMobile ? '22px 20px 24px' : '36px 36px 32px',
-          borderLeft: isMobile ? 'none' : '1px solid rgba(255,255,255,0.07)',
-          borderTop: isMobile ? '1px solid rgba(255,255,255,0.07)' : 'none',
-          overflow: isMobile ? 'visible' : 'auto',
-        }}>
-          {/* Header row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-            <div style={{
-              padding: '5px 16px', borderRadius: '50px',
-              background: 'rgba(212,175,55,0.1)',
-              border: '1px solid rgba(212,175,55,0.25)',
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: '10px', fontWeight: 600,
-              letterSpacing: '0.16em', textTransform: 'uppercase',
-              color: '#D4AF37',
-            }}>Nuestros servicios</div>
-            <button onClick={onClose} style={{
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: '50%', width: '34px', height: '34px',
-              cursor: 'pointer', color: 'rgba(245,240,230,0.5)', fontSize: '14px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'color 0.2s, border-color 0.2s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#F5F0E6'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(245,240,230,0.5)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)'; }}
-            >✕</button>
-          </div>
-
-          <h2 style={{
-            fontFamily: "'Figtree', sans-serif",
-            fontSize: isMobile ? '26px' : 'clamp(28px, 3vw, 42px)',
-            fontWeight: 700, color: '#F5F0E6',
-            letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '8px',
-          }}>{section.title}</h2>
-
-          <div style={{ width: '40px', height: '2px', background: '#D4AF37', marginBottom: '20px' }} />
-
-          <p style={{
-            fontFamily: "'Figtree', sans-serif", fontSize: '14px',
-            lineHeight: 1.8, color: 'rgba(245,240,230,0.6)',
-            marginBottom: '24px',
-          }}>{section.description}</p>
-
-          {/* Features */}
-          <ul style={{ listStyle: 'none', marginBottom: '28px', flex: 1 }}>
-            {section.features.map((feat, i) => (
-              <li key={i} style={{
-                display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 0',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
-              }}>
-                <span style={{ color: '#D4AF37', fontSize: '10px', flexShrink: 0 }}>◈</span>
-                <span style={{
-                  fontFamily: "'Figtree', sans-serif", fontSize: '14px',
-                  color: 'rgba(245,240,230,0.7)',
-                }}>{feat}</span>
-              </li>
-            ))}
-          </ul>
-
-          {/* CTA */}
-          <button
-            onClick={() => { onClose(); onCotizar(section.cotizadorContext); }}
-            style={{
-              background: '#D4AF37', color: '#0B0B0F',
-              border: 'none', borderRadius: '50px',
-              padding: '13px 32px', cursor: 'pointer',
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: '14px', fontWeight: 600,
-              letterSpacing: '0.02em',
-              alignSelf: isMobile ? 'stretch' : 'flex-start',
-              textAlign: 'center',
-              boxShadow: '0 6px 20px rgba(212,175,55,0.3)',
-              transition: 'background 0.2s, transform 0.15s, box-shadow 0.2s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = '#e8c44a';
-              if (!isMobile) e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = '#D4AF37';
-              if (!isMobile) e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Cotizar este servicio →
-          </button>
-        </div>
+        {ImageBlock}
+        {InfoBody}
       </div>
     </div>
   );
