@@ -181,15 +181,17 @@ function App() {
     }
   };
 
-  // Lock scroll when any modal is open
+  // Lock scroll cuando el cotizador está abierto. InfoModal maneja su propio
+  // lock (en mobile necesita que la página pueda scrollear de verdad, ver
+  // components/InfoModal.jsx).
   useEffect(() => {
-    if (cotizadorOpen || infoSection) {
+    if (cotizadorOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [cotizadorOpen, infoSection]);
+  }, [cotizadorOpen]);
 
   return (
     React.createElement(React.Fragment, null,
