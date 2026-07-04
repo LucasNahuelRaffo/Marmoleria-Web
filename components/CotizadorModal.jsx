@@ -32,26 +32,35 @@ function SubTabs({ tabs, active, onChange }) {
   );
 }
 
-function SwatchGrid({ items, selected, onPick, isMobile }) {
+function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
   const sz = isMobile ? '50px' : '56px';
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: '10px', padding: '14px' }}>
       {items.map(item => {
-        const isSel = selected?.id === item.id;
+        const isSel = selectedIds.includes(item.id);
+        const isActive = activeId === item.id;
         return (
           <div key={item.id}
             onClick={() => onPick(item)}
             style={{ cursor: 'pointer', textAlign: 'center' }}>
             <div style={{
               width: sz, height: sz, borderRadius: '50%', overflow: 'hidden',
-              margin: '0 auto 5px',
-              border: `${isSel ? '2.5px' : '2px'} solid ${isSel ? '#D4AF37' : 'rgba(255,255,255,0.08)'}`,
-              transform: isSel ? 'scale(1.1)' : 'scale(1)',
-              boxShadow: isSel ? '0 0 0 3px rgba(212,175,55,0.2)' : 'none',
+              margin: '0 auto 5px', position: 'relative',
+              border: `${isActive ? '2.5px' : '2px'} solid ${isActive ? '#D4AF37' : isSel ? 'rgba(212,175,55,0.55)' : 'rgba(255,255,255,0.08)'}`,
+              transform: isActive ? 'scale(1.1)' : 'scale(1)',
+              boxShadow: isActive ? '0 0 0 3px rgba(212,175,55,0.2)' : 'none',
               transition: 'all 0.18s',
             }}>
               <img src={item.img} alt={item.name} loading="lazy"
                 style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+              {isSel && (
+                <div style={{
+                  position: 'absolute', bottom: '-2px', right: '-2px', width: '18px', height: '18px',
+                  borderRadius: '50%', background: '#D4AF37', border: '2px solid #0F0F13',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '9px', color: '#0B0B0F', fontWeight: 700, lineHeight: 1,
+                }}>✓</div>
+              )}
             </div>
             <p style={{
               fontFamily: "'Figtree', sans-serif", fontSize: '9px', lineHeight: 1.3,
@@ -73,12 +82,13 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                  : context === 'electricidad' ? 'ilum'
                  : 'surf';
 
-  const [surface,  setSurface]  = useState(null);
+  // Cada categoría admite ahora más de un producto seleccionado (multi-selección).
+  const [surface,  setSurface]  = useState([]); // [{ tabKey, item }]
   const [surfTab,  setSurfTab]  = useState('marmoles');
-  const [mueble,   setMueble]   = useState(null);
+  const [mueble,   setMueble]   = useState([]); // [item]
   const [mblTab,   setMblTab]   = useState('cocinas');
-  const [herraje,  setHerraje]  = useState(null);
-  const [ilum,     setIlum]     = useState(null);
+  const [herraje,  setHerraje]  = useState([]); // [item]
+  const [ilum,     setIlum]     = useState([]); // [item]
   const [openSlot, setOpenSlot] = useState(initSlot);
   const [step,     setStep]     = useState('select');
   const [form,     setForm]     = useState({ nombre: '', telefono: '', email: '', metros: '', descripcion: '' });
@@ -86,13 +96,21 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   const [colorIdx, setColorIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  // El panel grande / la escena 3D muestran el último producto tocado dentro
+  // de cada categoría (el resto queda igual de seleccionado, solo cambia cuál
+  // se previsualiza en grande).
+  const activeSurfaceEntry = surface[surface.length - 1] || null; // { tabKey, item }
+  const activeMueble       = mueble[mueble.length - 1]   || null;
+  const activeHerraje      = herraje[herraje.length - 1] || null;
+  const activeIlum         = ilum[ilum.length - 1]       || null;
+
   /* ── Three.js refs ── */
   const sceneInstRef     = useRef(null);
   const currentSelRef    = useRef({ surface: null, mueble: null, herraje: null, ilum: null });
   const sceneRetryRef    = useRef(null);
 
   // Actualizar ref en cada render para que el callback ref lea valores frescos
-  currentSelRef.current = { surface, mueble, herraje, ilum };
+  currentSelRef.current = { surface: activeSurfaceEntry, mueble: activeMueble, herraje: activeHerraje, ilum: activeIlum };
 
   // Callback ref: se ejecuta cuando el div del canvas monta/desmonta
   const setSceneContainer = useCallback((node) => {
@@ -129,10 +147,11 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
     return () => { window.removeEventListener('resize', onR); document.body.style.overflow = ''; };
   }, []);
 
-  // Actualizar escena cuando cambian mueble / herraje / ilum
-  useEffect(() => { if (mueble)  sceneInstRef.current?.setFurniture(mueble.id);   }, [mueble]);
-  useEffect(() => { if (herraje) sceneInstRef.current?.setHerraje(herraje.id);     }, [herraje]);
-  useEffect(() => { if (ilum)    sceneInstRef.current?.setIluminacion(ilum.id);    }, [ilum]);
+  // Actualizar escena cuando cambia el mueble / herraje / ilum activo (el último tocado)
+  useEffect(() => { if (activeMueble)       sceneInstRef.current?.setFurniture(activeMueble.id);           }, [activeMueble]);
+  useEffect(() => { if (activeHerraje)      sceneInstRef.current?.setHerraje(activeHerraje.id);             }, [activeHerraje]);
+  useEffect(() => { if (activeIlum)         sceneInstRef.current?.setIluminacion(activeIlum.id);            }, [activeIlum]);
+  useEffect(() => { if (is3D && activeSurfaceEntry) sceneInstRef.current?.setStoneMaterial(activeSurfaceEntry.item); }, [activeSurfaceEntry, is3D]);
 
   const D        = window.MATERIALS_DATA;
   const surfItems = D[surfTab]      || [];
@@ -140,13 +159,18 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   const hrjItems  = D.herrajes     || [];
   const ilmItems  = D.iluminacion  || [];
 
-  const totalSel = [surface, mueble, herraje, ilum].filter(Boolean).length;
+  const totalSel = surface.length + mueble.length + herraje.length + ilum.length;
   const toggle   = (id) => setOpenSlot(p => p === id ? null : id);
 
+  // Click en un swatch = agregar/quitar del proyecto (multi-selección)
   const pickSurf = (item) => {
-    setSurface({ tabKey: surfTab, item });
-    if (is3D) sceneInstRef.current?.setStoneMaterial(item);
+    setSurface(prev => prev.some(s => s.item.id === item.id)
+      ? prev.filter(s => s.item.id !== item.id)
+      : [...prev, { tabKey: surfTab, item }]);
   };
+  const toggleMueble  = (item) => setMueble(prev  => prev.some(m => m.id === item.id) ? prev.filter(m => m.id !== item.id) : [...prev, item]);
+  const toggleHerraje = (item) => setHerraje(prev => prev.some(h => h.id === item.id) ? prev.filter(h => h.id !== item.id) : [...prev, item]);
+  const toggleIlum    = (item) => setIlum(prev    => prev.some(i => i.id === item.id) ? prev.filter(i => i.id !== item.id) : [...prev, item]);
 
   const sInput = {
     width: '100%', background: 'rgba(255,255,255,0.04)',
@@ -162,15 +186,17 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   };
 
   const selSummary = [
-    surface  && { label: 'Superficie',  item: surface.item },
-    mueble   && { label: 'Mueble',      item: mueble       },
-    herraje  && { label: 'Herraje',     item: herraje      },
-    ilum     && { label: 'Iluminación', item: ilum         },
-  ].filter(Boolean);
+    ...surface.map(s => ({ key: 'surf-' + s.item.id,     label: 'Superficie',  item: s.item })),
+    ...mueble.map(item => ({ key: 'mueble-' + item.id,   label: 'Mueble',      item })),
+    ...herraje.map(item => ({ key: 'herraje-' + item.id, label: 'Herraje',     item })),
+    ...ilum.map(item => ({ key: 'ilum-' + item.id,       label: 'Iluminación', item })),
+  ];
 
-  const slotHeader = (id, icon, label, selItem) => {
-    const open   = openSlot === id;
-    const hasSel = !!selItem;
+  const slotHeader = (id, icon, label, arr) => {
+    const open     = openSlot === id;
+    const count    = arr.length;
+    const hasSel   = count > 0;
+    const selItem  = arr[count - 1];
     return (
       <button onClick={() => toggle(id)} style={{
         width: '100%', display: 'flex', alignItems: 'center', gap: '12px',
@@ -193,7 +219,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
             color: hasSel ? '#F5F0E6' : 'rgba(245,240,230,0.2)',
             fontWeight: hasSel ? 600 : 400,
             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>{hasSel ? selItem.name : 'Sin seleccionar'}</p>
+          }}>{hasSel ? (count === 1 ? selItem.name : `${count} productos seleccionados`) : 'Sin seleccionar'}</p>
         </div>
         {hasSel && (
           <div style={{ width: '34px', height: '34px', borderRadius: '50%', overflow: 'hidden', border: '1.5px solid rgba(212,175,55,0.4)', flexShrink: 0 }}>
@@ -214,12 +240,12 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   // perder de vista lo elegido al agregar más de un elemento al proyecto).
   const currentFocus = ['herraje', 'ilum', 'mueble', 'surf'].includes(openSlot)
     ? openSlot
-    : (herraje ? 'herraje' : ilum ? 'ilum' : mueble ? 'mueble' : surface ? 'surf' : null);
+    : (herraje.length ? 'herraje' : ilum.length ? 'ilum' : mueble.length ? 'mueble' : surface.length ? 'surf' : null);
 
   const isHerrajeView = currentFocus === 'herraje';
   const isIlumView = currentFocus === 'ilum';
   const isMuebleView = currentFocus === 'mueble';
-  const envItem = isHerrajeView ? herraje : isIlumView ? ilum : isMuebleView ? mueble : surface?.item;
+  const envItem = isHerrajeView ? activeHerraje : isIlumView ? activeIlum : isMuebleView ? activeMueble : activeSurfaceEntry?.item;
   const colorList  = envItem?.colors;
   const activeColor = colorList ? colorList[colorIdx % colorList.length] : null;
   const envImg  = envItem ? (activeColor?.mesa || envItem.mesa || envItem.img) : null;
@@ -277,8 +303,8 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   <div style={{ marginBottom: '28px' }}>
                     <p style={{ ...sLabel, marginBottom: '12px' }}>Tu selección ({selSummary.length} elemento{selSummary.length !== 1 ? 's' : ''})</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                      {selSummary.map(({ label, item }) => (
-                        <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(212,175,55,0.07)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '8px', padding: '8px 12px', maxWidth: '200px' }}>
+                      {selSummary.map(({ key, label, item }) => (
+                        <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(212,175,55,0.07)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '8px', padding: '8px 12px', maxWidth: '200px' }}>
                           <div style={{ width: '36px', height: '36px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1.5px solid rgba(212,175,55,0.4)' }}>
                             <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
                           </div>
@@ -401,7 +427,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                         ? 'Electricidad y Luminación'
                         : isMuebleView
                         ? 'Mueble'
-                        : (surface ? (surface.tabKey === 'marmoles' ? 'Mármol' : surface.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
+                        : (activeSurfaceEntry ? (activeSurfaceEntry.tabKey === 'marmoles' ? 'Mármol' : activeSurfaceEntry.tabKey === 'granitos' ? 'Granito' : 'Purastone') : '')}
                     </p>
                     {!is3D && activeColor && (
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', marginBottom: '8px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(212,175,55,0.3)', borderRadius: '50px', padding: '4px 12px', fontFamily: "'Figtree', sans-serif", fontSize: '10px', letterSpacing: '0.08em', color: '#D4AF37' }}>
@@ -433,16 +459,11 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   </div>
                 )}
 
-                {/* Chips con todas las selecciones activas del proyecto */}
-                {[surface && { item: surface.item, label: 'Superficie' }, mueble && { item: mueble, label: 'Mueble' }, herraje && { item: herraje, label: 'Herraje' }, ilum && { item: ilum, label: 'Iluminación' }].filter(Boolean).length > 0 && (
-                  <div style={{ position: 'absolute', top: '12px', left: '12px', display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'none' }}>
-                    {[
-                      surface && { item: surface.item, label: 'Superficie'  },
-                      mueble  && { item: mueble,  label: 'Mueble'      },
-                      herraje && { item: herraje, label: 'Herraje'     },
-                      ilum    && { item: ilum,    label: 'Iluminación' },
-                    ].filter(Boolean).map(({ item, label }) => (
-                      <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50px', padding: '4px 10px 4px 4px' }}>
+                {/* Chips con todos los productos seleccionados del proyecto */}
+                {selSummary.length > 0 && (
+                  <div style={{ position: 'absolute', top: '12px', left: '12px', maxWidth: 'calc(100% - 24px)', maxHeight: 'calc(100% - 24px)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'auto' }}>
+                    {selSummary.map(({ key, item, label }) => (
+                      <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50px', padding: '4px 10px 4px 4px' }}>
                         <div style={{ width: '20px', height: '20px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
                           <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
                         </div>
@@ -465,13 +486,13 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                 <div style={{ flex: 1, overflow: 'auto' }}>
 
                   {/* Slot: Superficie */}
-                  {slotHeader('surf', '◈', 'Superficie', surface?.item)}
+                  {slotHeader('surf', '◈', 'Superficie', surface.map(s => s.item))}
                   {openSlot === 'surf' && (
                     <div>
                       <SubTabs tabs={SURF_TABS} active={surfTab} onChange={setSurfTab} />
                       <SwatchGrid
-                        items={surfItems} selected={surface?.item} onPick={pickSurf}
-                        isMobile={isMobile}
+                        items={surfItems} selectedIds={surface.map(s => s.item.id)} activeId={activeSurfaceEntry?.item.id}
+                        onPick={pickSurf} isMobile={isMobile}
                       />
                     </div>
                   )}
@@ -481,20 +502,20 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   {openSlot === 'mueble' && (
                     <div>
                       {MBL_TABS.length > 1 && <SubTabs tabs={MBL_TABS} active={mblTab} onChange={setMblTab} />}
-                      <SwatchGrid items={mblItems} selected={mueble} onPick={setMueble} isMobile={isMobile} />
+                      <SwatchGrid items={mblItems} selectedIds={mueble.map(m => m.id)} activeId={activeMueble?.id} onPick={toggleMueble} isMobile={isMobile} />
                     </div>
                   )}
 
                   {/* Slot: Herrajes */}
                   {slotHeader('herraje', '◆', 'Herrajes', herraje)}
                   {openSlot === 'herraje' && (
-                    <SwatchGrid items={hrjItems} selected={herraje} onPick={setHerraje} isMobile={isMobile} />
+                    <SwatchGrid items={hrjItems} selectedIds={herraje.map(h => h.id)} activeId={activeHerraje?.id} onPick={toggleHerraje} isMobile={isMobile} />
                   )}
 
                   {/* Slot: Iluminación */}
                   {slotHeader('ilum', '◎', 'Iluminación', ilum)}
                   {openSlot === 'ilum' && (
-                    <SwatchGrid items={ilmItems} selected={ilum} onPick={setIlum} isMobile={isMobile} />
+                    <SwatchGrid items={ilmItems} selectedIds={ilum.map(i => i.id)} activeId={activeIlum?.id} onPick={toggleIlum} isMobile={isMobile} />
                   )}
 
                 </div>
