@@ -10,6 +10,36 @@ const MBL_TABS = [
   { key: 'cocinas',   label: 'Cocinas'   },
 ];
 
+const COT_GUIDE_KEY = 'marmoleria_cotizador_guide_seen';
+
+const COT_TOUR_STEPS = [
+  {
+    target: null,
+    title: 'Armá tu proyecto 🛠️',
+    text: 'Este es el cotizador: elegí los productos que te gusten de cada categoría y al final envianos la consulta. Te mostramos cómo funciona.',
+  },
+  {
+    target: 'cot-slots', scroll: true,
+    title: 'Las categorías',
+    text: 'Superficie, Muebles, Herrajes e Iluminación. Tocá cada una para desplegarla y ver todos sus productos.',
+  },
+  {
+    target: 'cot-swatches', scroll: true,
+    title: 'Elegí tus productos',
+    text: 'Tocá los que te gusten para agregarlos al proyecto — podés elegir varios, se marcan con un tilde dorado. Tocalos de nuevo para quitarlos.',
+  },
+  {
+    target: 'cot-preview', scroll: true,
+    title: 'Vista previa',
+    text: 'Acá ves en grande el último producto que agregaste, con su foto en ambiente real.',
+  },
+  {
+    target: 'cot-cta', scroll: true,
+    title: '¿Listo? Cotizá tu proyecto',
+    text: 'Cuando hayas elegido todo, tocá este botón, completá tus datos y te enviamos la cotización.',
+  },
+];
+
 /* ── Componentes auxiliares (nivel módulo, sin remount) ─────────────────── */
 
 function SubTabs({ tabs, active, onChange }) {
@@ -35,7 +65,7 @@ function SubTabs({ tabs, active, onChange }) {
 function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
   const sz = isMobile ? '50px' : '56px';
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: '10px', padding: '14px' }}>
+    <div data-guide="cot-swatches" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: '10px', padding: '14px' }}>
       {items.map(item => {
         const isSel = selectedIds.includes(item.id);
         const isActive = activeId === item.id;
@@ -96,6 +126,21 @@ function CotizadorModal({ context = 'all', onClose }) {
   const [colorIdx, setColorIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showCart, setShowCart] = useState(false);
+  const [tourActive, setTourActive] = useState(false);
+
+  // Guía del cotizador: arranca sola la primera vez que se abre el modal
+  // (recordado en localStorage); el botón "?" del header la relanza.
+  useEffect(() => {
+    if (localStorage.getItem(COT_GUIDE_KEY)) return;
+    const t = setTimeout(() => {
+      localStorage.setItem(COT_GUIDE_KEY, '1');
+      setTourActive(true);
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Si el usuario avanza al formulario, la guía ya no aplica
+  useEffect(() => { if (step !== 'select') setTourActive(false); }, [step]);
 
   // El panel grande / la escena 3D muestran el último producto tocado dentro
   // de cada categoría (el resto queda igual de seleccionado, solo cambia cuál
@@ -230,12 +275,24 @@ function CotizadorModal({ context = 'all', onClose }) {
                 : 'Completá tus datos y te cotizamos'}
             </p>
           </div>
-          <button onClick={onClose}
-            style={{ background: 'none', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', color: 'rgba(245,240,230,0.5)', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s, border-color 0.2s', flexShrink: 0 }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#D4AF37'; e.currentTarget.style.borderColor = '#D4AF37'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(245,240,230,0.5)'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.2)'; }}>
-            ✕
-          </button>
+          <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            {step === 'select' && (
+              <button onClick={() => setTourActive(true)}
+                aria-label="Ver guía del cotizador"
+                title="¿Cómo funciona?"
+                style={{ background: 'none', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', color: 'rgba(212,175,55,0.7)', fontSize: '14px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s, border-color 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#D4AF37'; e.currentTarget.style.borderColor = '#D4AF37'; }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'rgba(212,175,55,0.7)'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.2)'; }}>
+                ?
+              </button>
+            )}
+            <button onClick={onClose}
+              style={{ background: 'none', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', color: 'rgba(245,240,230,0.5)', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'color 0.2s, border-color 0.2s', flexShrink: 0 }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#D4AF37'; e.currentTarget.style.borderColor = '#D4AF37'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(245,240,230,0.5)'; e.currentTarget.style.borderColor = 'rgba(212,175,55,0.2)'; }}>
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* ── Body ── */}
@@ -320,7 +377,7 @@ function CotizadorModal({ context = 'all', onClose }) {
           ) : (
             <>
               {/* Panel izquierdo — foto del material seleccionado */}
-              <div style={{
+              <div data-guide="cot-preview" style={{
                 flex: isMobile ? 'none' : '0 0 52%',
                 height: isMobile ? '260px' : 'auto',
                 position: 'relative', overflow: 'hidden',
@@ -469,7 +526,7 @@ function CotizadorModal({ context = 'all', onClose }) {
 
               {/* Panel derecho — acordeón */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', borderLeft: isMobile ? 'none' : '1px solid rgba(212,175,55,0.08)', borderTop: isMobile ? '1px solid rgba(212,175,55,0.08)' : 'none', overflow: 'hidden', background: '#0F0F13' }}>
-                <div style={{ flex: 1, overflow: 'auto' }}>
+                <div data-guide="cot-slots" style={{ flex: 1, overflow: 'auto' }}>
 
                   {/* Slot: Superficie */}
                   {slotHeader('surf', '◈', 'Superficie', surface.map(s => s.item))}
@@ -511,6 +568,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   <button
                     onClick={() => totalSel > 0 && setStep('form')}
                     disabled={totalSel === 0}
+                    data-guide="cot-cta"
                     style={{
                       width: '100%',
                       background: totalSel > 0 ? '#D4AF37' : 'rgba(212,175,55,0.1)',
@@ -533,6 +591,15 @@ function CotizadorModal({ context = 'all', onClose }) {
           )}
         </div>
       </div>
+
+      {/* Guía interactiva del cotizador (motor compartido en GuideTour.jsx) */}
+      {window.SpotlightTour && (
+        <window.SpotlightTour
+          steps={COT_TOUR_STEPS}
+          active={tourActive && step === 'select'}
+          onEnd={() => setTourActive(false)}
+        />
+      )}
     </div>
   );
 }
