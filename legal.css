@@ -1,0 +1,99 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: #0B0B0F;
+  color: #F5F0E6;
+  font-family: 'Figtree', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0B0B0F; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.4); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+.legal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 5.5%;
+  border-bottom: 1px solid rgba(212,175,55,0.12);
+}
+
+.legal-logo {
+  height: 34px; width: auto; display: block;
+}
+
+.legal-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: #D4AF37; text-decoration: none;
+  font-size: 13px; letter-spacing: 0.06em;
+  transition: opacity 0.2s;
+}
+.legal-back:hover { opacity: 0.75; }
+
+.legal-main {
+  max-width: 760px; margin: 0 auto;
+  padding: 56px 6% 96px;
+}
+
+.legal-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: #D4AF37;
+  margin-bottom: 14px;
+}
+
+.legal-main h1 {
+  font-size: clamp(28px, 5vw, 40px); font-weight: 700;
+  letter-spacing: -0.02em; line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.legal-updated {
+  font-size: 13px; color: rgba(245,240,230,0.4);
+  margin-bottom: 40px;
+}
+
+.legal-main h2 {
+  font-size: 18px; font-weight: 700; color: #F5F0E6;
+  letter-spacing: -0.01em;
+  margin: 36px 0 12px;
+}
+
+.legal-main p {
+  font-size: 15px; line-height: 1.8;
+  color: rgba(245,240,230,0.68);
+  margin-bottom: 14px;
+}
+
+.legal-main ul {
+  margin: 0 0 14px 20px;
+  color: rgba(245,240,230,0.68);
+  font-size: 15px; line-height: 1.8;
+}
+
+.legal-main li { margin-bottom: 6px; }
+
+.legal-main a { color: #D4AF37; text-decoration: none; }
+.legal-main a:hover { text-decoration: underline; }
+
+.legal-divider {
+  width: 40px; height: 2px; background: #D4AF37;
+  margin: 0 0 28px;
+}
+
+.legal-contact-box {
+  margin-top: 40px;
+  padding: 22px 24px;
+  background: rgba(212,175,55,0.07);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+}
+
+.legal-contact-box p { margin-bottom: 4px; }
+.legal-contact-box p:last-child { margin-bottom: 0; }
+
+.legal-footer {
+  text-align: center; padding: 28px 5.5% 40px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 12px; color: rgba(245,240,230,0.22);
+}

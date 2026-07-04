@@ -228,6 +228,26 @@ function Footer({ onCotizarClick }) {
           fontFamily: "'Figtree', sans-serif",
           fontSize: '12px', color: 'rgba(245,240,230,0.18)'
         }}>© 2025 Marmolería. Todos los derechos reservados.</p>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '12px' : '20px', alignItems: 'center', justifyContent: 'center' }}>
+          {[
+            { label: 'Política de Privacidad', href: 'politica-privacidad.html' },
+            { label: 'Condiciones del Servicio', href: 'condiciones-servicio.html' },
+            { label: 'Eliminación de Datos de Usuario', href: 'eliminacion-datos.html' },
+          ].map(l => (
+            <a key={l.href} href={l.href} style={{
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: '11px', letterSpacing: '0.04em',
+              color: 'rgba(245,240,230,0.3)', textDecoration: 'none',
+              transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#D4AF37'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(245,240,230,0.3)'}>
+              {l.label}
+            </a>
+          ))}
+        </div>
+
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ width: '40px', height: '1px', background: 'linear-gradient(to right, transparent, rgba(212,175,55,0.4))' }} />
           <p style={{
