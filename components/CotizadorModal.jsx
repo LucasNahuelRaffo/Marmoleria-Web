@@ -96,6 +96,7 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
   const [sent,     setSent]     = useState(false);
   const [colorIdx, setColorIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showCart, setShowCart] = useState(false);
 
   // El panel grande / la escena 3D muestran el último producto tocado dentro
   // de cada categoría (el resto queda igual de seleccionado, solo cambia cuál
@@ -460,17 +461,55 @@ function CotizadorModal({ context = 'all', view = '3d', onClose }) {
                   </div>
                 )}
 
-                {/* Chips con todos los productos seleccionados del proyecto */}
+                {/* Icono de carrito con el total de productos seleccionados */}
                 {selSummary.length > 0 && (
-                  <div style={{ position: 'absolute', top: '12px', left: '12px', maxWidth: 'calc(100% - 24px)', maxHeight: 'calc(100% - 24px)', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '5px', pointerEvents: 'auto' }}>
-                    {selSummary.map(({ key, item, label }) => (
-                      <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '50px', padding: '4px 10px 4px 4px' }}>
-                        <div style={{ width: '20px', height: '20px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-                          <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
-                        </div>
-                        <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '9px', color: 'rgba(245,240,230,0.65)', whiteSpace: 'nowrap' }}>{item.name}</span>
+                  <div style={{ position: 'absolute', top: '12px', left: '12px', zIndex: 4, pointerEvents: 'auto' }}>
+                    <button
+                      onClick={e => { e.stopPropagation(); setShowCart(v => !v); }}
+                      aria-label="Ver productos seleccionados"
+                      style={{
+                        position: 'relative', width: '38px', height: '38px', borderRadius: '50%',
+                        background: 'rgba(11,11,15,0.75)', backdropFilter: 'blur(8px)',
+                        border: `1px solid ${showCart ? '#D4AF37' : 'rgba(212,175,55,0.35)'}`, color: '#D4AF37',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                        transition: 'border-color 0.2s',
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#D4AF37'; }}
+                      onMouseLeave={e => { e.currentTarget.style.borderColor = showCart ? '#D4AF37' : 'rgba(212,175,55,0.35)'; }}
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                      </svg>
+                      <span style={{
+                        position: 'absolute', top: '-4px', right: '-4px', minWidth: '17px', height: '17px', padding: '0 3px',
+                        borderRadius: '50%', background: '#D4AF37', color: '#0B0B0F', fontFamily: "'Figtree', sans-serif",
+                        fontSize: '9px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: '2px solid #0B0B0F', lineHeight: 1,
+                      }}>{selSummary.length}</span>
+                    </button>
+
+                    {showCart && (
+                      <div style={{
+                        marginTop: '8px', width: '220px', maxHeight: '260px', overflowY: 'auto',
+                        background: 'rgba(11,11,15,0.94)', backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(212,175,55,0.25)', borderRadius: '10px', padding: '8px',
+                        display: 'flex', flexDirection: 'column', gap: '6px', boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+                      }}>
+                        {selSummary.map(({ key, item, label }) => (
+                          <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ width: '28px', height: '28px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+                              <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: item.fit || 'cover' }} />
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                              <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '8px', color: '#D4AF37', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '1px' }}>{label}</p>
+                              <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '11px', color: '#F5F0E6', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
 
