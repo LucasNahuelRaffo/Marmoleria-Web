@@ -18,17 +18,19 @@ function ServiceCard({ section, onInfoClick, isMobile }) {
         display: 'flex', flexDirection: 'column',
         transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
         transform: hovered && !isMobile ? 'translateY(-6px)' : 'translateY(0)',
+        willChange: 'transform', backfaceVisibility: 'hidden',
         boxShadow: hovered ?
         '0 28px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2)' :
         '0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.1)'
       }}>
-      
+
       {/* Image top */}
       <div style={{ position: 'relative', height: isMobile ? '190px' : '240px', overflow: 'hidden', flexShrink: 0, background: '#0e0c09' }}>
         <img src={section.img} alt={section.title} style={{
           width: '100%', height: '100%', objectFit: 'cover',
           transition: 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)',
           transform: hovered && !isMobile ? 'scale(1.07)' : 'scale(1)',
+          willChange: 'transform', backfaceVisibility: 'hidden',
           display: 'block'
         }} />
         <div style={{

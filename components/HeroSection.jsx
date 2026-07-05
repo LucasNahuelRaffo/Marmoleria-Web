@@ -22,7 +22,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
         background: 'linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.06) 100%)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        willChange: 'backdrop-filter',
+        willChange: 'transform', backfaceVisibility: 'hidden',
         border: `1px solid ${hovered ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.16)'}`,
         display: 'flex', flexDirection: 'column',
         transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
@@ -41,6 +41,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
           width: '100%', height: '100%', objectFit: 'cover',
           transition: 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)',
           transform: hovered ? 'scale(1.07)' : 'scale(1)',
+          willChange: 'transform', backfaceVisibility: 'hidden',
           display: 'block',
         }} />
         {/* Gradient fade to glass body */}
