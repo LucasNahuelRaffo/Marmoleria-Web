@@ -1,6 +1,7 @@
 const { useState, useEffect, useRef } = React;
 
 const WA_NUMBER = '5491100000000';
+window.WA_NUMBER = WA_NUMBER;
 
 function WhatsAppButton() {
   const [hovered, setHovered] = useState(false);
@@ -95,8 +96,8 @@ function PersonalizaTodo({ onCotizarClick }) {
           color: '#F5F0E6', letterSpacing: '-0.02em',
           lineHeight: 1.1, marginBottom: '18px',
         }}>
-          Diseñá cada rincón<br />
-          <span style={{ fontWeight: 700 }}>de tu hogar</span>
+          Coordiná toda tu obra<br />
+          <span style={{ fontWeight: 700 }}>en un solo lugar</span>
         </h2>
 
         <p style={{
@@ -106,7 +107,7 @@ function PersonalizaTodo({ onCotizarClick }) {
           maxWidth: '480px', margin: '0 auto 40px',
           lineHeight: 1.65,
         }}>
-          Combiná materiales, herrajes, iluminación y muebles en una sola experiencia de diseño.
+          Marmolería, iluminación, herrajes y muebles a medida, con un único interlocutor de principio a fin.
         </p>
 
         {/* Chips de rubros */}
@@ -201,6 +202,7 @@ function App() {
       React.createElement(HeroSection, {
         onCardClick: openCotizador,
         onVerMasClick: handleVerMas,
+        onCotizarClick: () => openCotizador('all'),
       }),
       React.createElement(AboutSection, null),
       React.createElement(InfoSections, { onInfoClick: openInfo }),

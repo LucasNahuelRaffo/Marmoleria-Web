@@ -58,7 +58,7 @@ function AboutSection() {
             border: '1px solid rgba(255,255,255,0.12)',
             boxShadow: '0 24px 64px rgba(0,0,0,0.55)'
           }}>
-            <img src="images/familia.webp" alt="Nuestra familia" style={{
+            <img src="images/familia.webp" alt="Nuestro equipo" style={{
               width: '100%', aspectRatio: isMobile ? '1.2/1' : '4/5',
               objectFit: 'cover', objectPosition: 'center top',
               display: 'block'
@@ -119,7 +119,7 @@ function AboutSection() {
             color: '#F5F0E6', marginBottom: '24px',
             letterSpacing: '-0.02em'
           }}>
-            Una tradición<br />hecha con dedicación
+            Tu único interlocutor<br />para toda la obra
           </h2>
 
           <div style={{
@@ -133,8 +133,9 @@ function AboutSection() {
             fontSize: '15px', lineHeight: 1.8,
             color: 'rgba(245,240,230,0.62)', marginBottom: '18px'
           }}>
-            Somos una empresa familiar con más de 90 años en el rubro de la marmolería.
-            Nacimos con la pasión por los materiales nobles y la convicción de que cada espacio merece lo mejor.
+            Nos asociamos estratégicamente con las industrias metalúrgicas, marmolerías y talleres
+            madereros más sólidos de la región, empresas que suman más de 90 años refinando la calidad
+            premium de cada material. Unificamos esa tradición en un solo lugar.
           </p>
 
           <p style={{
@@ -142,8 +143,10 @@ function AboutSection() {
             fontSize: '15px', lineHeight: 1.8,
             color: 'rgba(245,240,230,0.62)', marginBottom: isMobile ? '32px' : '40px'
           }}>
-            Desde mármoles importados hasta soluciones integrales de cocina y baño,
-            acompañamos a nuestros clientes con asesoramiento personalizado e instalación profesional.
+            Entendemos que tu verdadero problema en obra no es solo el producto, sino la gestión. Por eso
+            actuamos como tu único interlocutor y facilitador técnico, involucrándonos de principio a fin:
+            desde la compatibilidad de planos hasta la logística en el sitio de construcción. Más de 50
+            proyectos coordinados con éxito lo respaldan.
           </p>
 
           {/* Stats */}
@@ -154,7 +157,7 @@ function AboutSection() {
             paddingTop: '32px'
           }}>
             {[
-              { num: '500+', label: 'Proyectos' },
+              { num: '50+', label: 'Proyectos' },
               { num: '90+', label: 'Años' },
               { num: '100%', label: 'Garantía' }
             ].map((s, i) => (
@@ -178,6 +181,48 @@ function AboutSection() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Value cards — por qué elegirnos */}
+      <div style={{
+        position: 'relative', zIndex: 1,
+        maxWidth: '1280px', margin: isMobile ? '48px auto 0' : '72px auto 0',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+        gap: isMobile ? '14px' : '20px',
+      }}>
+        {[
+          { code: 'FÁB — 01', title: 'Directo de fábrica', desc: 'Sin intermediarios: mejores precios y tiempos de entrega más cortos.' },
+          { code: 'INT — 02', title: 'Todo en un lugar', desc: 'Marmolería, iluminación, herrajes y muebles, coordinados para tu obra.' },
+          { code: 'MED — 03', title: 'Diseño a medida', desc: 'Cada proyecto es distinto. Lo resolvemos a la medida exacta que necesita.' },
+          { code: 'PRE — 04', title: 'Calidad premium', desc: 'Materiales y terminaciones pensadas para durar en el tiempo.' },
+        ].map((c) => (
+          <div key={c.code} style={{
+            background: 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '18px',
+            padding: isMobile ? '20px 18px' : '28px 26px',
+          }}>
+            <div style={{
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: '10px', fontWeight: 600,
+              letterSpacing: '0.16em', color: '#D4AF37',
+              marginBottom: '16px',
+            }}>{c.code}</div>
+            <h3 style={{
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: isMobile ? '17px' : '19px', fontWeight: 600,
+              lineHeight: 1.2, color: '#F5F0E6', marginBottom: '12px',
+              letterSpacing: '-0.01em',
+            }}>{c.title}</h3>
+            <p style={{
+              fontFamily: "'Figtree', sans-serif",
+              fontSize: '13px', lineHeight: 1.6,
+              color: 'rgba(245,240,230,0.5)',
+            }}>{c.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

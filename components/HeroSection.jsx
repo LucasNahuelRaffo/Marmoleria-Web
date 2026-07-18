@@ -125,7 +125,7 @@ function GlassCard({ card, index, onCardClick, onVerMasClick }) {
   );
 }
 
-function HeroSection({ onCardClick, onVerMasClick }) {
+function HeroSection({ onCardClick, onVerMasClick, onCotizarClick }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const touchStartX = useRef(null);
@@ -207,7 +207,7 @@ function HeroSection({ onCardClick, onVerMasClick }) {
               marginBottom: isMobile ? '18px' : '10px', whiteSpace: isMobile ? 'normal' : 'nowrap',
               textShadow: '0 2px 40px rgba(0,0,0,0.45)',
             }}>
-              Diseñá tu espacio ideal
+              Proveedor integral para tu obra
             </h1>
           </div>
 
@@ -216,11 +216,53 @@ function HeroSection({ onCardClick, onVerMasClick }) {
             fontSize: isMobile ? '15px' : '18px', fontWeight: 400,
             color: 'rgba(245,240,230,0.75)',
             letterSpacing: '0.01em', marginBottom: '0',
-            maxWidth: '540px', lineHeight: 1.55,
+            maxWidth: '580px', lineHeight: 1.55,
             textShadow: '0 1px 20px rgba(0,0,0,0.4)',
           }}>
-            Materiales premium y soluciones a medida para cada rincón de tu hogar
+            Marmolería a medida, iluminación, herrajes y muebles de baño y cocina. Calidad premium, directo de fábrica, sin intermediarios.
           </p>
+
+          {/* CTAs */}
+          <div style={{
+            display: 'flex', flexWrap: 'wrap',
+            gap: isMobile ? '12px' : '16px',
+            justifyContent: 'center',
+            marginTop: isMobile ? '26px' : '32px',
+          }}>
+            <button
+              onClick={() => onCotizarClick && onCotizarClick()}
+              data-guide="hero-catalogo"
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#D4AF37'; e.currentTarget.style.color = '#0B0B0F'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#D4AF37'; e.currentTarget.style.color = '#0B0B0F'; }}
+              style={{
+                background: '#D4AF37', color: '#0B0B0F',
+                border: '1.5px solid #D4AF37', borderRadius: '4px',
+                padding: isMobile ? '14px 30px' : '16px 40px', cursor: 'pointer',
+                fontFamily: "'Figtree', sans-serif",
+                fontSize: '13px', fontWeight: 600,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                transition: 'background 0.25s, color 0.25s, transform 0.2s',
+              }}>
+              Ver catálogo
+            </button>
+            <a
+              href={`https://wa.me/${window.WA_NUMBER || '5491100000000'}`}
+              target="_blank" rel="noopener noreferrer"
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(245,240,230,0.12)'; e.currentTarget.style.borderColor = 'rgba(245,240,230,0.9)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(245,240,230,0.55)'; }}
+              style={{
+                background: 'transparent', color: '#F5F0E6',
+                border: '1.5px solid rgba(245,240,230,0.55)', borderRadius: '4px',
+                padding: isMobile ? '14px 30px' : '16px 40px',
+                fontFamily: "'Figtree', sans-serif",
+                fontSize: '13px', fontWeight: 600,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                textDecoration: 'none', display: 'inline-flex', alignItems: 'center',
+                transition: 'background 0.25s, border-color 0.25s',
+              }}>
+              Hablar con un asesor
+            </a>
+          </div>
         </div>
 
         {/* Cards view */}

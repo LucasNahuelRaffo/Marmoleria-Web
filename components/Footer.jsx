@@ -118,15 +118,15 @@ function Footer({ onCotizarClick }) {
             fontSize: '22px',
             letterSpacing: '0.12em',
             marginBottom: '18px', color: "rgba(235, 233, 227, 0.87)", fontWeight: "400"
-          }}>MARMOLERÍA</div>
+          }}>HOMECONNECT</div>
           <p style={{
             fontFamily: "'Figtree', sans-serif",
             fontSize: '14px', lineHeight: 1.75,
             color: 'rgba(245,240,230,0.4)', maxWidth: '270px',
             marginBottom: '28px'
           }}>
-            Más de 90 años transformando espacios con materiales nobles,
-            diseño y precisión artesanal.
+            Proveedor integral para tu obra: marmolería, iluminación, herrajes
+            y muebles a medida, directo de fábrica y sin intermediarios.
           </p>
           {/* Socials */}
           <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
@@ -167,7 +167,7 @@ function Footer({ onCotizarClick }) {
             letterSpacing: '0.18em', textTransform: 'uppercase',
             color: 'rgba(245,240,230,0.3)', marginBottom: '20px'
           }}>Servicios</h4>
-          {['Marmolería', 'Electricidad y luminación', 'Muebles a medida', 'Herrajes'].map(linkBtn)}
+          {['Marmolería', 'Muebles a medida', 'Herrajes', 'Iluminación'].map(linkBtn)}
         </div>
 
         {/* Empresa */}
@@ -227,7 +227,7 @@ function Footer({ onCotizarClick }) {
         <p style={{
           fontFamily: "'Figtree', sans-serif",
           fontSize: '12px', color: 'rgba(245,240,230,0.18)'
-        }}>© 2025 Marmolería. Todos los derechos reservados.</p>
+        }}>© 2025 Homeconnect. Todos los derechos reservados.</p>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: isMobile ? '12px' : '20px', alignItems: 'center', justifyContent: 'center' }}>
           {[

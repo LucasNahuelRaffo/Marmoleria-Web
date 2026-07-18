@@ -70,20 +70,13 @@ function Navbar({ onCotizarClick }) {
       transition: 'background 0.5s, backdrop-filter 0.5s, border-color 0.5s'
     }}>
       {/* Brand */}
-      <div style={{ position: 'relative', width: '130px', height: '46px', zIndex: 1100, flexShrink: 0 }}>
-        <img src="images/logo-blanco.png" alt="Marmolería"
+      <div style={{ position: 'relative', height: '52px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        <img src="images/logo-homeconnect.png" alt="Homeconnect"
+          onClick={() => scrollTo('hero')}
           style={{
-            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+            height: '100%', width: 'auto',
             objectFit: 'contain', objectPosition: 'left center',
-            opacity: scrolled || menuOpen ? 0 : 1,
-            transition: 'opacity 0.4s ease',
-          }} />
-        <img src="images/logo-dorado.png" alt="Marmolería"
-          style={{
-            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-            objectFit: 'contain', objectPosition: 'left center',
-            opacity: scrolled || menuOpen ? 1 : 0,
-            transition: 'opacity 0.4s ease',
+            borderRadius: '8px', cursor: 'pointer',
           }} />
       </div>
 
