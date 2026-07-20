@@ -42,7 +42,7 @@ function Navbar({ onCotizarClick }) {
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 72;
+      const top = el.getBoundingClientRect().top + window.scrollY - 86;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   };
@@ -59,7 +59,7 @@ function Navbar({ onCotizarClick }) {
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1000,
-      height: '68px', padding: '0 5%',
+      height: '82px', padding: '0 5%',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       background: scrolled || menuOpen ?
       'rgba(11,9,6,0.95)' :
@@ -70,8 +70,8 @@ function Navbar({ onCotizarClick }) {
       transition: 'background 0.5s, backdrop-filter 0.5s, border-color 0.5s'
     }}>
       {/* Brand */}
-      <div style={{ position: 'relative', height: '64px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-        <img src="images/logo-homeconnect-2.png" alt="Homeconnect"
+      <div style={{ position: 'relative', height: '76px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+        <img src="images/logo-homeconnect-3.png" alt="Homeconnect"
           onClick={() => scrollTo('hero')}
           style={{
             height: '100%', width: 'auto',

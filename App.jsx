@@ -179,7 +179,7 @@ function App() {
   const handleVerMas = (sectionId) => {
     const el = document.getElementById(sectionId);
     if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      const top = el.getBoundingClientRect().top + window.scrollY - 90;
       window.scrollTo({ top, behavior: 'smooth' });
     }
   };

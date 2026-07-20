@@ -190,7 +190,7 @@ function HeroSection({ onCardClick, onVerMasClick, onCotizarClick }) {
         flex: 1, display: 'flex', flexDirection: 'column',
         padding: isMobile ? '0 4% 32px' : '0 5.5%',
       }}>
-        <div style={{ height: '68px', flexShrink: 0 }} />
+        <div style={{ height: '82px', flexShrink: 0 }} />
 
         {/* Center headline */}
         <div style={{

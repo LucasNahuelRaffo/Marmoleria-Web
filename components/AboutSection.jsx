@@ -34,17 +34,6 @@ function ValueCard({ card, isMobile }) {
         pointerEvents: 'none',
       }} />
 
-      {/* Ghost number */}
-      <div style={{
-        position: 'absolute', top: isMobile ? '10px' : '6px', right: '18px',
-        fontFamily: "'Figtree', sans-serif",
-        fontSize: isMobile ? '48px' : '68px', fontWeight: 800, lineHeight: 1,
-        color: active ? 'rgba(212,175,55,0.18)' : 'rgba(255,255,255,0.045)',
-        transform: active ? 'scale(1.12) translateY(-2px)' : 'scale(1)',
-        transition: 'color 0.45s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1)',
-        pointerEvents: 'none', letterSpacing: '-0.03em',
-      }}>{card.num}</div>
-
       {/* Content */}
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{
