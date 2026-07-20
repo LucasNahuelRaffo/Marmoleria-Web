@@ -216,7 +216,9 @@ function HeroSection({ onCardClick, onVerMasClick, onCotizarClick }) {
             fontSize: isMobile ? '15px' : '18px', fontWeight: 400,
             color: 'rgba(245,240,230,0.75)',
             letterSpacing: '0.01em', marginBottom: '0',
-            maxWidth: '580px', lineHeight: 1.55,
+            maxWidth: isMobile ? '580px' : 'none',
+            whiteSpace: isMobile ? 'normal' : 'nowrap',
+            lineHeight: 1.55,
             textShadow: '0 1px 20px rgba(0,0,0,0.4)',
           }}>
             Marmolería a medida, iluminación, herrajes y muebles de baño y cocina. Calidad premium, directo de fábrica, sin intermediarios.
