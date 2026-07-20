@@ -1,6 +1,6 @@
 const { useState, useEffect, useRef } = React;
 
-const WA_NUMBER = '5491124894427';
+const WA_NUMBER = '5491125814433';
 window.WA_NUMBER = WA_NUMBER;
 
 function WhatsAppButton() {

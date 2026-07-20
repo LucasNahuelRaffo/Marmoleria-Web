@@ -100,7 +100,7 @@ function Navbar({ onCotizarClick }) {
       {/* Hablar con un asesor pill - Hidden on mobile, handled in drawer */}
       {!isMobile && (
         <a
-          href={`https://wa.me/${window.WA_NUMBER || '5491124894427'}`}
+          href={`https://wa.me/${window.WA_NUMBER || '5491125814433'}`}
           target="_blank" rel="noopener noreferrer"
           data-guide="nav-cotizar"
           style={{
@@ -220,7 +220,7 @@ function Navbar({ onCotizarClick }) {
           ))}
           <a
             className="mobile-menu-link"
-            href={`https://wa.me/${window.WA_NUMBER || '5491124894427'}`}
+            href={`https://wa.me/${window.WA_NUMBER || '5491125814433'}`}
             target="_blank" rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
             style={{

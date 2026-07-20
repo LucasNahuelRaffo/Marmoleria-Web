@@ -190,7 +190,7 @@ function Footer({ onCotizarClick }) {
             color: 'rgba(245,240,230,0.3)', marginBottom: '20px'
           }}>Contacto</h4>
           {[
-            { label: 'Teléfono', value: '+54 9 11 2489-4427' },
+            { label: 'Teléfono', value: '+54 9 11 2581-4433' },
             { label: 'Email', value: 'connecthomec@gmail.com' },
             { label: 'Dirección', value: 'Buenos Aires, Argentina' },
             { label: 'Horario', value: 'Lun–Vie 9:00–18:00' }

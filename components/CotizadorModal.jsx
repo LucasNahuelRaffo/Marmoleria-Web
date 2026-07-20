@@ -352,7 +352,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   if (form.descripcion.trim()) {
                     lines.push('', '*Descripción del proyecto:*', form.descripcion.trim());
                   }
-                  const num = window.WA_NUMBER || '5491124894427';
+                  const num = window.WA_NUMBER || '5491125814433';
                   window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
                   setSent(true);
                 }}>
