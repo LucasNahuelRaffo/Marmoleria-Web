@@ -71,7 +71,7 @@ function Navbar({ onCotizarClick }) {
     }}>
       {/* Brand */}
       <div style={{ position: 'relative', height: '76px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-        <img src="images/logo-homeconnect-3.png" alt="Homeconnect"
+        <img src="images/logo-homeconnect-4.png" alt="Homeconnect"
           onClick={() => scrollTo('hero')}
           style={{
             height: '100%', width: 'auto',
