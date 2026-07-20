@@ -302,8 +302,8 @@ function CotizadorModal({ context = 'all', onClose }) {
           {sent ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', textAlign: 'center' }}>
               <div style={{ width: '70px', height: '70px', border: '2px solid #D4AF37', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', color: '#D4AF37', marginBottom: '24px' }}>✓</div>
-              <h3 style={{ fontFamily: "'Figtree', sans-serif", fontSize: '28px', fontWeight: 600, color: '#F5F0E6', marginBottom: '10px' }}>Solicitud enviada</h3>
-              <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '14px', color: 'rgba(245,240,230,0.55)', lineHeight: 1.7, maxWidth: '380px' }}>Recibimos tu proyecto. Nos pondremos en contacto a la brevedad.</p>
+              <h3 style={{ fontFamily: "'Figtree', sans-serif", fontSize: '28px', fontWeight: 600, color: '#F5F0E6', marginBottom: '10px' }}>Te abrimos WhatsApp</h3>
+              <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '14px', color: 'rgba(245,240,230,0.55)', lineHeight: 1.7, maxWidth: '400px' }}>Te preparamos el mensaje con tu proyecto cargado. Solo tenés que <strong style={{ color: '#D4AF37', fontWeight: 600 }}>enviarlo</strong> y te respondemos a la brevedad. ¿No se abrió? Revisá que no se haya bloqueado la ventana emergente.</p>
               <button onClick={onClose} style={{ marginTop: '32px', background: '#D4AF37', color: '#0B0B0F', border: 'none', borderRadius: '4px', padding: '12px 36px', cursor: 'pointer', fontFamily: "'Figtree', sans-serif", fontSize: '13px', fontWeight: 700, letterSpacing: '0.1em' }}>Cerrar</button>
             </div>
 
@@ -334,7 +334,28 @@ function CotizadorModal({ context = 'all', onClose }) {
                   </div>
                 )}
 
-                <form onSubmit={e => { e.preventDefault(); setSent(true); }}>
+                <form onSubmit={e => {
+                  e.preventDefault();
+                  const lines = [
+                    '¡Hola HOMECONNECT! Quiero cotizar mi proyecto.',
+                    '',
+                    '*Mis datos:*',
+                    `• Nombre: ${form.nombre}`,
+                    `• Teléfono: ${form.telefono}`,
+                    `• Email: ${form.email}`,
+                    `• Metros² aprox.: ${form.metros}`,
+                  ];
+                  if (selSummary.length) {
+                    lines.push('', `*Productos seleccionados (${selSummary.length}):*`);
+                    selSummary.forEach(({ label, item }) => lines.push(`• ${label}: ${item.name}`));
+                  }
+                  if (form.descripcion.trim()) {
+                    lines.push('', '*Descripción del proyecto:*', form.descripcion.trim());
+                  }
+                  const num = window.WA_NUMBER || '5491124894427';
+                  window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
+                  setSent(true);
+                }}>
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     {[
                       { key: 'nombre',   label: 'Nombre completo',         placeholder: 'Tu nombre',         type: 'text',  full: false },
