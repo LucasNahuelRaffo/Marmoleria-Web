@@ -1,17 +1,17 @@
 const { useState, useEffect, useRef } = React;
 
-const GUIDE_KEY = 'marmoleria_guide_seen';
+const GUIDE_KEY = 'homeconnect_guide_seen_v2';
 
 const GUIDE_STEPS = [
   {
     target: null,
     title: '¡Bienvenido! 👋',
-    text: 'Te mostramos en 30 segundos cómo aprovechar la página: explorar los productos, ver los detalles de cada servicio y cotizar tu proyecto.',
+    text: 'Te mostramos en 30 segundos cómo aprovechar la página: explorá los rubros, mirá el detalle de cada servicio, armá tu cotización y hablá con un asesor.',
   },
   {
     target: 'hero-cards', scroll: true,
     title: 'Nuestros rubros',
-    text: 'Estas son nuestras categorías: marmolería, electricidad, muebles y herrajes. Tocá cualquier tarjeta para armar tu proyecto con productos de esa categoría.',
+    text: 'Estas son nuestras líneas: marmolería, muebles, herrajes e iluminación. Tocá cualquier tarjeta para armar tu proyecto con productos de esa categoría.',
   },
   {
     target: 'ver-detalles', scroll: true,
@@ -25,13 +25,13 @@ const GUIDE_STEPS = [
   },
   {
     target: 'nav-cotizar',
-    title: 'Cotizá cuando quieras',
-    text: 'Este botón está siempre visible arriba: podés abrir el cotizador en cualquier momento, desde cualquier parte de la página.',
+    title: 'Hablá con un asesor',
+    text: 'Arriba a la derecha tenés este botón: te comunica directo por WhatsApp con un asesor para resolver dudas o pedir tu presupuesto.',
   },
   {
     target: 'whatsapp',
     title: '¿Dudas? Escribinos',
-    text: 'Si preferís hablar directo con nosotros, tocá el botón de WhatsApp y te respondemos a la brevedad.',
+    text: 'Este botón de WhatsApp está siempre visible: tocalo cuando quieras y te respondemos a la brevedad.',
   },
 ];
 
