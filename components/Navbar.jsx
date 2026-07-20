@@ -70,7 +70,7 @@ function Navbar({ onCotizarClick }) {
       transition: 'background 0.5s, backdrop-filter 0.5s, border-color 0.5s'
     }}>
       {/* Brand */}
-      <div style={{ position: 'relative', height: '52px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
+      <div style={{ position: 'relative', height: '64px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
         <img src="images/logo-homeconnect.png" alt="Homeconnect"
           onClick={() => scrollTo('hero')}
           style={{
@@ -93,10 +93,11 @@ function Navbar({ onCotizarClick }) {
         </div>
       )}
 
-      {/* Cotizar pill - Hidden on mobile, handled in drawer */}
+      {/* Hablar con un asesor pill - Hidden on mobile, handled in drawer */}
       {!isMobile && (
-        <button
-          onClick={onCotizarClick}
+        <a
+          href={`https://wa.me/${window.WA_NUMBER || '5491124894427'}`}
+          target="_blank" rel="noopener noreferrer"
           data-guide="nav-cotizar"
           style={{
             background: 'transparent',
@@ -106,7 +107,7 @@ function Navbar({ onCotizarClick }) {
             fontFamily: "'Figtree', sans-serif",
             color: '#F5F0E6',
             fontSize: '14px', fontWeight: 400,
-            letterSpacing: '0.04em',
+            letterSpacing: '0.04em', textDecoration: 'none',
             transition: 'background 0.25s, border-color 0.25s, color 0.25s'
           }}
           onMouseEnter={(e) => {
@@ -117,9 +118,9 @@ function Navbar({ onCotizarClick }) {
             e.currentTarget.style.background = 'transparent';
             e.currentTarget.style.borderColor = 'rgba(245,240,230,0.55)';
           }}>
-          
-          Cotizar
-        </button>
+
+          Hablar con un asesor
+        </a>
       )}
 
       {/* Hamburger Icon - Only on Mobile */}
@@ -213,12 +214,11 @@ function Navbar({ onCotizarClick }) {
               {label}
             </button>
           ))}
-          <button
+          <a
             className="mobile-menu-link"
-            onClick={() => {
-              setMenuOpen(false);
-              onCotizarClick();
-            }}
+            href={`https://wa.me/${window.WA_NUMBER || '5491124894427'}`}
+            target="_blank" rel="noopener noreferrer"
+            onClick={() => setMenuOpen(false)}
             style={{
               background: '#D4AF37',
               border: 'none',
@@ -231,11 +231,12 @@ function Navbar({ onCotizarClick }) {
               fontWeight: 600,
               letterSpacing: '0.04em',
               marginTop: '10px',
+              textDecoration: 'none',
               boxShadow: '0 8px 24px rgba(212,175,55,0.25)',
             }}
           >
-            Cotizar
-          </button>
+            Hablar con un asesor
+          </a>
         </div>
       )}
     </nav>);

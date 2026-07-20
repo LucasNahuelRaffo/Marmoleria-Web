@@ -1,5 +1,52 @@
 ﻿const { useState, useEffect } = React;
 
+function ValueCard({ card, isMobile }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative',
+        borderRadius: '24px',
+        background: 'linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.06) 100%)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: `1px solid ${hovered ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.16)'}`,
+        padding: isMobile ? '22px 20px' : '28px 26px',
+        willChange: 'transform', backfaceVisibility: 'hidden',
+        transform: hovered && !isMobile ? 'translateY(-6px)' : 'translateY(0)',
+        transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
+        boxShadow: hovered
+          ? '0 28px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)'
+          : '0 6px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+      }}>
+      <div style={{
+        fontFamily: "'Figtree', sans-serif",
+        fontSize: '10px', fontWeight: 600,
+        letterSpacing: '0.16em', color: '#D4AF37',
+        marginBottom: '16px',
+      }}>{card.code}</div>
+      <h3 style={{
+        fontFamily: "'Figtree', sans-serif",
+        fontSize: isMobile ? '17px' : '19px', fontWeight: 600,
+        lineHeight: 1.2, color: '#F5F0E6', marginBottom: '14px',
+        letterSpacing: '-0.01em',
+      }}>{card.title}</h3>
+      <div style={{
+        width: '40px', height: '2px',
+        background: 'linear-gradient(to right, #D4AF37, transparent)',
+        marginBottom: '14px',
+      }} />
+      <p style={{
+        fontFamily: "'Figtree', sans-serif",
+        fontSize: '13px', lineHeight: 1.6,
+        color: 'rgba(245,240,230,0.55)',
+      }}>{card.desc}</p>
+    </div>
+  );
+}
+
 function AboutSection() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -197,31 +244,7 @@ function AboutSection() {
           { code: 'MED — 03', title: 'Diseño a medida', desc: 'Cada proyecto es distinto. Lo resolvemos a la medida exacta que necesita.' },
           { code: 'PRE — 04', title: 'Calidad premium', desc: 'Materiales y terminaciones pensadas para durar en el tiempo.' },
         ].map((c) => (
-          <div key={c.code} style={{
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '18px',
-            padding: isMobile ? '20px 18px' : '28px 26px',
-          }}>
-            <div style={{
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: '10px', fontWeight: 600,
-              letterSpacing: '0.16em', color: '#D4AF37',
-              marginBottom: '16px',
-            }}>{c.code}</div>
-            <h3 style={{
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: isMobile ? '17px' : '19px', fontWeight: 600,
-              lineHeight: 1.2, color: '#F5F0E6', marginBottom: '12px',
-              letterSpacing: '-0.01em',
-            }}>{c.title}</h3>
-            <p style={{
-              fontFamily: "'Figtree', sans-serif",
-              fontSize: '13px', lineHeight: 1.6,
-              color: 'rgba(245,240,230,0.5)',
-            }}>{c.desc}</p>
-          </div>
+          <ValueCard key={c.code} card={c} isMobile={isMobile} />
         ))}
       </div>
     </section>
