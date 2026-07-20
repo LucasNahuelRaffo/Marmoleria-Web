@@ -2,47 +2,83 @@
 
 function ValueCard({ card, isMobile }) {
   const [hovered, setHovered] = useState(false);
+  const active = hovered && !isMobile;
   return (
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        position: 'relative',
-        borderRadius: '24px',
-        background: 'linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.06) 100%)',
+        position: 'relative', overflow: 'hidden',
+        borderRadius: '20px',
+        background: active
+          ? 'linear-gradient(160deg, rgba(212,175,55,0.12) 0%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.05) 100%)'
+          : 'linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0.04) 100%)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        border: `1px solid ${hovered ? 'rgba(255,255,255,0.32)' : 'rgba(255,255,255,0.16)'}`,
-        padding: isMobile ? '22px 20px' : '28px 26px',
+        border: `1px solid ${active ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.12)'}`,
+        padding: isMobile ? '24px 22px' : '30px 28px',
         willChange: 'transform', backfaceVisibility: 'hidden',
-        transform: hovered && !isMobile ? 'translateY(-6px)' : 'translateY(0)',
-        transition: 'transform 0.32s ease, box-shadow 0.32s ease, border-color 0.25s',
-        boxShadow: hovered
-          ? '0 28px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.25)'
-          : '0 6px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15)',
+        transform: active ? 'translateY(-10px)' : 'translateY(0)',
+        transition: 'transform 0.45s cubic-bezier(0.16,1,0.3,1), box-shadow 0.45s ease, border-color 0.35s ease, background 0.45s ease',
+        boxShadow: active
+          ? '0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.14)'
+          : '0 6px 24px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.09)',
       }}>
+
+      {/* Radial gold glow */}
       <div style={{
-        fontFamily: "'Figtree', sans-serif",
-        fontSize: '10px', fontWeight: 600,
-        letterSpacing: '0.16em', color: '#D4AF37',
-        marginBottom: '16px',
-      }}>{card.code}</div>
-      <h3 style={{
-        fontFamily: "'Figtree', sans-serif",
-        fontSize: isMobile ? '17px' : '19px', fontWeight: 600,
-        lineHeight: 1.2, color: '#F5F0E6', marginBottom: '14px',
-        letterSpacing: '-0.01em',
-      }}>{card.title}</h3>
-      <div style={{
-        width: '40px', height: '2px',
-        background: 'linear-gradient(to right, #D4AF37, transparent)',
-        marginBottom: '14px',
+        position: 'absolute', top: '-45%', right: '-25%',
+        width: '260px', height: '260px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.22) 0%, transparent 70%)',
+        opacity: active ? 1 : 0, transition: 'opacity 0.5s ease',
+        pointerEvents: 'none',
       }} />
-      <p style={{
+
+      {/* Ghost number */}
+      <div style={{
+        position: 'absolute', top: isMobile ? '10px' : '6px', right: '18px',
         fontFamily: "'Figtree', sans-serif",
-        fontSize: '13px', lineHeight: 1.6,
-        color: 'rgba(245,240,230,0.55)',
-      }}>{card.desc}</p>
+        fontSize: isMobile ? '48px' : '68px', fontWeight: 800, lineHeight: 1,
+        color: active ? 'rgba(212,175,55,0.18)' : 'rgba(255,255,255,0.045)',
+        transform: active ? 'scale(1.12) translateY(-2px)' : 'scale(1)',
+        transition: 'color 0.45s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1)',
+        pointerEvents: 'none', letterSpacing: '-0.03em',
+      }}>{card.num}</div>
+
+      {/* Content */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '10px', fontWeight: 700,
+          letterSpacing: '0.18em',
+          color: active ? '#E7C86B' : '#D4AF37',
+          transition: 'color 0.35s ease',
+          marginBottom: '18px',
+        }}>{card.code}</div>
+
+        <h3 style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: isMobile ? '18px' : '20px', fontWeight: 600,
+          lineHeight: 1.2,
+          color: active ? '#FFFFFF' : '#F5F0E6',
+          transition: 'color 0.35s ease',
+          marginBottom: '14px', letterSpacing: '-0.01em',
+        }}>{card.title}</h3>
+
+        <div style={{
+          width: active ? '100%' : '40px', height: '2px',
+          background: 'linear-gradient(to right, #D4AF37, rgba(212,175,55,0.15))',
+          marginBottom: '14px', borderRadius: '2px',
+          transition: 'width 0.5s cubic-bezier(0.16,1,0.3,1)',
+        }} />
+
+        <p style={{
+          fontFamily: "'Figtree', sans-serif",
+          fontSize: '13px', lineHeight: 1.65,
+          color: active ? 'rgba(245,240,230,0.72)' : 'rgba(245,240,230,0.55)',
+          transition: 'color 0.35s ease',
+        }}>{card.desc}</p>
+      </div>
     </div>
   );
 }
@@ -239,10 +275,10 @@ function AboutSection() {
         gap: isMobile ? '14px' : '20px',
       }}>
         {[
-          { code: 'FÁB — 01', title: 'Directo de fábrica', desc: 'Sin intermediarios: mejores precios y tiempos de entrega más cortos.' },
-          { code: 'INT — 02', title: 'Todo en un lugar', desc: 'Marmolería, iluminación, herrajes y muebles, coordinados para tu obra.' },
-          { code: 'MED — 03', title: 'Diseño a medida', desc: 'Cada proyecto es distinto. Lo resolvemos a la medida exacta que necesita.' },
-          { code: 'PRE — 04', title: 'Calidad premium', desc: 'Materiales y terminaciones pensadas para durar en el tiempo.' },
+          { code: 'FÁB — 01', num: '01', title: 'Directo de fábrica', desc: 'Sin intermediarios: mejores precios y tiempos de entrega más cortos.' },
+          { code: 'INT — 02', num: '02', title: 'Todo en un lugar', desc: 'Marmolería, iluminación, herrajes y muebles, coordinados para tu obra.' },
+          { code: 'MED — 03', num: '03', title: 'Diseño a medida', desc: 'Cada proyecto es distinto. Lo resolvemos a la medida exacta que necesita.' },
+          { code: 'PRE — 04', num: '04', title: 'Calidad premium', desc: 'Materiales y terminaciones pensadas para durar en el tiempo.' },
         ].map((c) => (
           <ValueCard key={c.code} card={c} isMobile={isMobile} />
         ))}

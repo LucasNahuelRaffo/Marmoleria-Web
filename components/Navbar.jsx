@@ -71,7 +71,7 @@ function Navbar({ onCotizarClick }) {
     }}>
       {/* Brand */}
       <div style={{ position: 'relative', height: '64px', zIndex: 1100, flexShrink: 0, display: 'flex', alignItems: 'center' }}>
-        <img src="images/logo-homeconnect.png" alt="Homeconnect"
+        <img src="images/logo-homeconnect-2.png" alt="Homeconnect"
           onClick={() => scrollTo('hero')}
           style={{
             height: '100%', width: 'auto',
@@ -82,7 +82,11 @@ function Navbar({ onCotizarClick }) {
 
       {/* Center links - Hidden on mobile */}
       {!isMobile && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '38px' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '38px',
+          position: 'absolute', left: '50%', top: '50%',
+          transform: 'translate(-50%, -50%)',
+        }}>
           {[['Inicio', 'hero'], ['Sobre Nosotros', 'about'], ['Contacto', 'contact']].map(([label, id]) =>
           <button key={id} style={navLink}
           onClick={() => scrollTo(id)}
