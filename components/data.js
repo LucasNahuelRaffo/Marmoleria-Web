@@ -18,7 +18,6 @@ window.MATERIALS_DATA = {
     { id: 'negro-brasil',     name: 'Negro Brasil',      img: 'images/granitos/gris-mara.webp',          mesa: 'images/mesas/negro-brasil.webp',     tex: 'negro' },
     { id: 'negro-cosmic',     name: 'Negro Cosmic',      img: 'images/granitos/gris-perla.webp',        mesa: 'images/mesas/negro-cosmic.webp',     tex: 'negro-cosmic' },
     { id: 'crema-julia',      name: 'Crema Julia',       img: 'images/granitos/rosa-del-salto.webp',     mesa: 'images/mesas/crema-julia.webp',      tex: 'crema' },
-    { id: 'negro-boreal',     name: 'Negro Boreal',      img: 'images/granitos/negro-boreal.webp',       mesa: 'images/mesas/negro-boreal.webp',     tex: 'negro-boreal' },
   ],
   purastone: [
     { id: 'blanco-cana',    name: 'Blanco Caña',    img: 'images/purastone/blanco-cana.webp',     mesa: 'images/mesas/blanco-cana.webp',      tex: 'blanco' },
