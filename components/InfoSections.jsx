@@ -181,7 +181,21 @@ function InfoSections({ onInfoClick }) {
       {/* Subtle bg */}
       <div style={{
         position: 'absolute', inset: 0,
-        background: 'linear-gradient(180deg, #0B0B0F 0%, #0e0c09 50%, #0B0B0F 100%)'
+        background: 'linear-gradient(180deg, #0B0B0F 0%, #12100b 50%, #0B0B0F 100%)'
+      }} />
+
+      {/* Luces ambientales cálidas */}
+      <div style={{
+        position: 'absolute', top: '4%', left: '-140px',
+        width: '600px', height: '600px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '2%', right: '-160px',
+        width: '640px', height: '640px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
       }} />
 
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '1280px', margin: '0 auto' }}>

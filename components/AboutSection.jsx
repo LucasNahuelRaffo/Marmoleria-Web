@@ -99,6 +99,20 @@ function AboutSection() {
         background: 'linear-gradient(135deg, rgba(11,9,6,0.98) 0%, rgba(20,16,10,0.92) 100%)'
       }} />
 
+      {/* Luces ambientales cálidas */}
+      <div style={{
+        position: 'absolute', top: '-140px', right: '-120px',
+        width: '620px', height: '620px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+      <div style={{
+        position: 'absolute', bottom: '-180px', left: '-160px',
+        width: '560px', height: '560px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+
       <div style={{
         position: 'relative', zIndex: 1,
         maxWidth: '1280px', margin: '0 auto',

@@ -80,6 +80,12 @@ function PersonalizaTodo({ onCotizarClick }) {
         background: 'radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
+      <div style={{
+        position: 'absolute', top: '-80px', left: '-60px',
+        width: '420px', height: '420px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         {/* Eyebrow */}

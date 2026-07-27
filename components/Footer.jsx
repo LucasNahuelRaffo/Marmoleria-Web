@@ -38,6 +38,15 @@ function Footer({ onCotizarClick }) {
         background: 'linear-gradient(180deg, #0B0B0F 0%, #080604 100%)'
       }} />
 
+      {/* Luz ambiental cálida (cerca de la banda CTA) */}
+      <div style={{
+        position: 'absolute', top: '-120px', left: '50%',
+        transform: 'translateX(-50%)',
+        width: '760px', height: '420px', borderRadius: '50%',
+        background: 'radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 70%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
+
       {/* CTA Band */}
       <div style={{
         position: 'relative', zIndex: 1,
