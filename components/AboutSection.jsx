@@ -101,15 +101,15 @@ function AboutSection() {
 
       {/* Luces ambientales cálidas */}
       <div style={{
-        position: 'absolute', top: '-140px', right: '-120px',
-        width: '620px', height: '620px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,175,55,0.09) 0%, transparent 70%)',
+        position: 'absolute', top: '-100px', right: '-40px',
+        width: '640px', height: '640px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(224,180,74,0.20) 0%, rgba(212,175,55,0.08) 38%, transparent 72%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
       <div style={{
-        position: 'absolute', bottom: '-180px', left: '-160px',
+        position: 'absolute', bottom: '-120px', left: '-80px',
         width: '560px', height: '560px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,175,55,0.06) 0%, transparent 70%)',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
 

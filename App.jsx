@@ -76,14 +76,14 @@ function PersonalizaTodo({ onCotizarClick }) {
       <div style={{
         position: 'absolute', top: '50%', left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '600px', height: '300px',
-        background: 'radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 70%)',
+        width: '720px', height: '360px',
+        background: 'radial-gradient(ellipse, rgba(224,180,74,0.18) 0%, rgba(212,175,55,0.07) 40%, transparent 72%)',
         pointerEvents: 'none',
       }} />
       <div style={{
-        position: 'absolute', top: '-80px', left: '-60px',
-        width: '420px', height: '420px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)',
+        position: 'absolute', top: '-60px', left: '-40px',
+        width: '460px', height: '460px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(212,175,55,0.13) 0%, transparent 70%)',
         pointerEvents: 'none',
       }} />
 

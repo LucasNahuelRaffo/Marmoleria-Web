@@ -186,15 +186,15 @@ function InfoSections({ onInfoClick }) {
 
       {/* Luces ambientales cálidas */}
       <div style={{
-        position: 'absolute', top: '4%', left: '-140px',
-        width: '600px', height: '600px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)',
+        position: 'absolute', top: '2%', left: '-80px',
+        width: '640px', height: '640px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(224,180,74,0.18) 0%, rgba(212,175,55,0.07) 40%, transparent 72%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
       <div style={{
-        position: 'absolute', bottom: '2%', right: '-160px',
-        width: '640px', height: '640px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 70%)',
+        position: 'absolute', bottom: '0%', right: '-90px',
+        width: '680px', height: '680px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(224,180,74,0.17) 0%, rgba(212,175,55,0.06) 40%, transparent 72%)',
         pointerEvents: 'none', zIndex: 0,
       }} />
 
