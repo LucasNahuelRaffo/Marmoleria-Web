@@ -67,6 +67,12 @@
     /* Mesa fadein animation */
     @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
 
+    /* Vidriera de productos: marquee horizontal continuo */
+    @keyframes marqueeLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes marqueeRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+    .marquee-track { animation-play-state: running; }
+    .marquee-row:hover .marquee-track { animation-play-state: paused; }
+
     /* Pulso dorado de la guía interactiva */
     @keyframes guidePulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.55), 0 0 24px rgba(212,175,55,0.35); }
@@ -77,9 +83,8 @@
     ::placeholder { color: rgba(245,240,230,0.25); }
     input, textarea, select { color-scheme: dark; }
 
-    /* About section responsive */
+    /* Responsive grids */
     @media (max-width: 900px) {
-      #about-grid { grid-template-columns: 1fr !important; }
       #hero-cards { grid-template-columns: repeat(2, 1fr) !important; }
       #footer-grid { grid-template-columns: 1fr 1fr !important; }
     }
@@ -114,16 +119,16 @@
   <script src="components/data.js?v=18"></script>
 
   <!-- Components (Babel JSX) -->
-  <script type="text/babel" src="components/Navbar.jsx?v=12"></script>
-  <script type="text/babel" src="components/HeroSection.jsx?v=8"></script>
-  <script type="text/babel" src="components/AboutSection.jsx?v=7"></script>
-  <script type="text/babel" src="components/InfoSections.jsx?v=4"></script>
+  <script type="text/babel" src="components/Navbar.jsx?v=13"></script>
+  <script type="text/babel" src="components/HeroVideoSection.jsx?v=1"></script>
+  <script type="text/babel" src="components/HeroSection.jsx?v=9"></script>
+  <script type="text/babel" src="components/ProductsMarquee.jsx?v=1"></script>
   <script type="text/babel" src="components/CotizadorModal.jsx?v=23"></script>
   <script type="text/babel" src="components/InfoModal.jsx?v=2"></script>
-  <script type="text/babel" src="components/Footer.jsx?v=8"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=9"></script>
   <script type="text/babel" src="components/GuideTour.jsx?v=5"></script>
 
   <!-- App -->
-  <script type="text/babel" src="App.jsx?v=9"></script>
+  <script type="text/babel" src="App.jsx?v=10"></script>
 </body>
 </html>

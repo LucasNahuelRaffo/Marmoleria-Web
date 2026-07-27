@@ -161,7 +161,7 @@ function HeroSection({ onCardClick, onVerMasClick, onCotizarClick }) {
   };
 
   return (
-    <section id="hero" style={{
+    <section id="rubros" style={{
       position: 'relative',
       minHeight: '100vh',
       display: 'flex', flexDirection: 'column',

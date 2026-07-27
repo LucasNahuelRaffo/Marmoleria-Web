@@ -87,7 +87,7 @@ function Navbar({ onCotizarClick }) {
           position: 'absolute', left: '50%', top: '50%',
           transform: 'translate(-50%, -50%)',
         }}>
-          {[['Inicio', 'hero'], ['Sobre Nosotros', 'about'], ['Contacto', 'contact']].map(([label, id]) =>
+          {[['Inicio', 'hero'], ['Contacto', 'contact']].map(([label, id]) =>
           <button key={id} style={navLink}
           onClick={() => scrollTo(id)}
           onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
@@ -100,7 +100,7 @@ function Navbar({ onCotizarClick }) {
       {/* Hablar con un asesor pill - Hidden on mobile, handled in drawer */}
       {!isMobile && (
         <a
-          href={`https://wa.me/${window.WA_NUMBER || '5491125814433'}`}
+          href={`https://wa.me/${window.WA_NUMBER || '5491125062187'}`}
           target="_blank" rel="noopener noreferrer"
           data-guide="nav-cotizar"
           style={{
@@ -195,7 +195,7 @@ function Navbar({ onCotizarClick }) {
             pointerEvents: menuOpen ? 'auto' : 'none',
           }}
         >
-          {[['Inicio', 'hero'], ['Sobre Nosotros', 'about'], ['Contacto', 'contact']].map(([label, id]) => (
+          {[['Inicio', 'hero'], ['Contacto', 'contact']].map(([label, id]) => (
             <button
               key={id}
               className="mobile-menu-link"
@@ -220,7 +220,7 @@ function Navbar({ onCotizarClick }) {
           ))}
           <a
             className="mobile-menu-link"
-            href={`https://wa.me/${window.WA_NUMBER || '5491125814433'}`}
+            href={`https://wa.me/${window.WA_NUMBER || '5491125062187'}`}
             target="_blank" rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
             style={{

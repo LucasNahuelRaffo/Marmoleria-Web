@@ -356,7 +356,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                     lines.push('', '*Descripción del proyecto:*', form.descripcion.trim());
                   }
                   lines.push('', 'Leí y acepté los Términos y Condiciones ✔');
-                  const num = window.WA_NUMBER || '5491125814433';
+                  const num = window.WA_NUMBER || '5491125062187';
                   window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
                   setSent(true);
                 }}>

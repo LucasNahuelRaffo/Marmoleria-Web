@@ -1,6 +1,6 @@
 const { useState, useEffect, useRef } = React;
 
-const WA_NUMBER = '5491125814433';
+const WA_NUMBER = '5491125062187';
 window.WA_NUMBER = WA_NUMBER;
 
 function WhatsAppButton() {
@@ -205,13 +205,13 @@ function App() {
   return (
     React.createElement(React.Fragment, null,
       React.createElement(Navbar, { onCotizarClick: () => openCotizador('all') }),
+      React.createElement(HeroVideoSection, { onCotizarClick: () => openCotizador('all') }),
       React.createElement(HeroSection, {
         onCardClick: openCotizador,
         onVerMasClick: handleVerMas,
         onCotizarClick: () => openCotizador('all'),
       }),
-      React.createElement(AboutSection, null),
-      React.createElement(InfoSections, { onInfoClick: openInfo }),
+      React.createElement(ProductsMarquee, { onProductClick: openCotizador }),
       React.createElement(PersonalizaTodo, { onCotizarClick: () => openCotizador('all') }),
       React.createElement(Footer, { onCotizarClick: () => openCotizador('all') }),
       cotizadorOpen && React.createElement(CotizadorModal, {
