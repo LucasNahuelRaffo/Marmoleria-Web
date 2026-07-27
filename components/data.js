@@ -33,14 +33,18 @@ window.MATERIALS_DATA = {
     { id: 'gris-zen',       name: 'Gris Zen',       img: 'images/purastone/gris-topo.webp',       mesa: 'images/mesas/gris-zen.webp',         tex: 'gris-claro' },
   ],
   cocinas: [
-    { id: 'cocina-l', name: 'Cocina en L', img: 'images/cocinas/cocina-L.webp' },
-    { id: 'cocina-integral', name: 'Cocina Integral', img: 'images/cocinas/cocina-integral.webp' },
-    { id: 'cocina-cajones', name: 'Con Cajones', img: 'images/cocinas/cocina-cajones.webp' },
+    { id: 'cocina-u-roble', name: 'Cocina en U — blanco y roble', img: 'images/muebles/cocina-u-roble-sw.webp', mesa: 'images/muebles/cocina-u-roble.webp' },
+    { id: 'cocina-roble',   name: 'Cocina línea roble claro',      img: 'images/muebles/cocina-roble.webp',      mesa: 'images/muebles/cocina-roble.webp' },
+    { id: 'cocina-gris',    name: 'Cocina gris moderna',           img: 'images/muebles/cocina-gris.webp',       mesa: 'images/muebles/cocina-gris.webp' },
   ],
   vanitorys: [
-    { id: 'vanitory-amplio', name: 'Amplio', img: 'images/vanitorys/vanitory-amplio.webp' },
-    { id: 'vanitory-blanco', name: 'Blanco Clásico', img: 'images/vanitorys/vanitory-blanco.webp' },
-    { id: 'vanitory-sencillo', name: 'Sencillo', img: 'images/vanitorys/vanitory-blanco-sencillo.webp' },
+    { id: 'vanitory-piedra',   name: 'Vanitory de piedra',   img: 'images/muebles/vanitory-piedra.webp',        mesa: 'images/muebles/vanitory-piedra.webp' },
+    { id: 'vanitory-amplio',   name: 'Amplio',               img: 'images/vanitorys/vanitory-amplio.webp' },
+    { id: 'vanitory-blanco',   name: 'Blanco Clásico',       img: 'images/vanitorys/vanitory-blanco.webp' },
+    { id: 'vanitory-sencillo', name: 'Sencillo',             img: 'images/vanitorys/vanitory-blanco-sencillo.webp' },
+  ],
+  living: [
+    { id: 'rack-tv', name: 'Rack de TV a medida', img: 'images/muebles/rack-tv.webp', mesa: 'images/muebles/rack-tv.webp' },
   ],
   herrajes: [
     { id: 'h-083-biselada',   name: 'Manija Biselada',        img: 'images/Herrajes/art0083_manija-biselada-de_02.webp', mesa: 'images/imagenes seleccion herrajes/Metal_door_with_handle_202607012030.jpeg', fit: 'contain' },
@@ -96,6 +100,7 @@ window.COTIZADOR_TABS = {
   muebles: [
     { key: 'cocinas', label: 'Cocinas' },
     { key: 'vanitorys', label: 'Vanitorys' },
+    { key: 'living', label: 'Living/TV' },
   ],
   herrajes: [
     { key: 'herrajes', label: 'Herrajes' },
@@ -109,6 +114,7 @@ window.COTIZADOR_TABS = {
     { key: 'purastone',  label: 'Purastone' },
     { key: 'cocinas',    label: 'Cocinas' },
     { key: 'vanitorys',  label: 'Vanitorys' },
+    { key: 'living',     label: 'Living/TV' },
     { key: 'herrajes',   label: 'Herrajes' },
     { key: 'iluminacion',label: 'Luminación' },
   ],

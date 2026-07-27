@@ -16,7 +16,7 @@ const GUIDE_STEPS = [
   {
     target: 'ver-detalles', scroll: true,
     title: '¿Querés saber más de los productos?',
-    text: 'Tocá "Ver detalles" en cualquier tarjeta para conocer toda la info del servicio: qué incluye, materiales y garantía.',
+    text: 'Tocá "Ver detalles" en cualquier tarjeta para conocer toda la info del servicio: qué incluye, materiales y tiempos.',
   },
   {
     target: 'personalizar', scroll: true,

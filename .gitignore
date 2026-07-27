@@ -2,3 +2,9 @@
 screenshots/
 uploads/
 compress.js
+
+# Fuentes de imágenes sin optimizar (el sitio usa los .webp)
+images/muebles/*.jpeg
+images/muebles/*.jpg
+images/imagen_sobre_nosotros.jpeg
+images/cocina 1.jpeg

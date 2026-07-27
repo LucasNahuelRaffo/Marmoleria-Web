@@ -8,6 +8,8 @@ const SURF_TABS = [
 
 const MBL_TABS = [
   { key: 'cocinas',   label: 'Cocinas'   },
+  { key: 'vanitorys', label: 'Vanitorys' },
+  { key: 'living',    label: 'Living/TV' },
 ];
 
 const COT_GUIDE_KEY = 'marmoleria_cotizador_guide_seen';
@@ -123,6 +125,7 @@ function CotizadorModal({ context = 'all', onClose }) {
   const [step,     setStep]     = useState('select');
   const [form,     setForm]     = useState({ nombre: '', telefono: '', email: '', metros: '', descripcion: '' });
   const [sent,     setSent]     = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [colorIdx, setColorIdx] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showCart, setShowCart] = useState(false);
@@ -352,6 +355,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   if (form.descripcion.trim()) {
                     lines.push('', '*Descripción del proyecto:*', form.descripcion.trim());
                   }
+                  lines.push('', 'Leí y acepté los Términos y Condiciones ✔');
                   const num = window.WA_NUMBER || '5491125814433';
                   window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener,noreferrer');
                   setSent(true);
@@ -382,10 +386,38 @@ function CotizadorModal({ context = 'all', onClose }) {
                         onBlur={e => e.currentTarget.style.borderColor = 'rgba(212,175,55,0.2)'}
                       />
                     </div>
+                    {/* Info importante */}
+                    <div style={{ gridColumn: '1 / -1', background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '8px', padding: '14px 16px' }}>
+                      <p style={{ fontFamily: "'Figtree', sans-serif", fontSize: '11px', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#D4AF37', marginBottom: '8px' }}>Información importante</p>
+                      <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        {[
+                          'Plazo estimado: ~20 días hábiles desde la compra hasta la entrega.',
+                          'Piezas a medida: no se aceptan devoluciones por errores de medición.',
+                          'El precio se confirma al momento de la seña (puede variar hasta entonces).',
+                        ].map((t, i) => (
+                          <li key={i} style={{ display: 'flex', gap: '8px', fontFamily: "'Figtree', sans-serif", fontSize: '12px', lineHeight: 1.5, color: 'rgba(245,240,230,0.7)' }}>
+                            <span style={{ color: '#D4AF37', flexShrink: 0 }}>◈</span>{t}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Aceptación de T&C */}
+                    <label style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
+                      <input type="checkbox" checked={acceptedTerms} onChange={e => setAcceptedTerms(e.target.checked)}
+                        style={{ width: '18px', height: '18px', accentColor: '#D4AF37', marginTop: '1px', flexShrink: 0, cursor: 'pointer' }} />
+                      <span style={{ fontFamily: "'Figtree', sans-serif", fontSize: '12.5px', lineHeight: 1.5, color: 'rgba(245,240,230,0.7)' }}>
+                        Leí y acepto los{' '}
+                        <a href="terminos-y-condiciones.html" target="_blank" rel="noopener noreferrer" style={{ color: '#D4AF37', textDecoration: 'underline' }}>Términos y Condiciones</a>
+                        {' '}y confirmo que la información ingresada es correcta.
+                      </span>
+                    </label>
+
                     <div style={{ gridColumn: '1 / -1' }}>
-                      <button type="submit" style={{ width: '100%', background: '#D4AF37', color: '#0B0B0F', border: 'none', borderRadius: '4px', padding: '14px', cursor: 'pointer', fontFamily: "'Figtree', sans-serif", fontSize: '13px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'background 0.2s' }}
-                        onMouseEnter={e => e.currentTarget.style.background = '#c9a42e'}
-                        onMouseLeave={e => e.currentTarget.style.background = '#D4AF37'}>
+                      <button type="submit" disabled={!acceptedTerms}
+                        style={{ width: '100%', background: acceptedTerms ? '#D4AF37' : 'rgba(212,175,55,0.15)', color: acceptedTerms ? '#0B0B0F' : 'rgba(245,240,230,0.35)', border: 'none', borderRadius: '4px', padding: '14px', cursor: acceptedTerms ? 'pointer' : 'not-allowed', fontFamily: "'Figtree', sans-serif", fontSize: '13px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'background 0.2s, color 0.2s' }}
+                        onMouseEnter={e => { if (acceptedTerms) e.currentTarget.style.background = '#c9a42e'; }}
+                        onMouseLeave={e => { if (acceptedTerms) e.currentTarget.style.background = '#D4AF37'; }}>
                         Enviar cotización
                       </button>
                     </div>

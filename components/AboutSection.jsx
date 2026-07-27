@@ -130,7 +130,7 @@ function AboutSection() {
             border: '1px solid rgba(255,255,255,0.12)',
             boxShadow: '0 24px 64px rgba(0,0,0,0.55)'
           }}>
-            <img src="images/familia.webp" alt="Nuestro equipo" style={{
+            <img src="images/sobre-nosotros.webp" alt="Nuestro trabajo" style={{
               width: '100%', aspectRatio: isMobile ? '1.2/1' : '4/5',
               objectFit: 'cover', objectPosition: 'center top',
               display: 'block'
@@ -231,7 +231,7 @@ function AboutSection() {
             {[
               { num: '50+', label: 'Proyectos' },
               { num: '90+', label: 'Años' },
-              { num: '100%', label: 'Garantía' }
+              { num: '100%', label: 'A medida' }
             ].map((s, i) => (
               <div key={s.label} style={{
                 textAlign: 'center',

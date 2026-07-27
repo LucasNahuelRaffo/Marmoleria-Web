@@ -87,23 +87,41 @@
       #hero-cards { grid-template-columns: 1fr !important; }
       #footer-grid { grid-template-columns: 1fr !important; }
     }
+
+    /* Foco visible por teclado (accesibilidad, sin afectar el mouse) */
+    :focus-visible {
+      outline: 2px solid rgba(212, 175, 55, 0.85);
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+    :focus:not(:focus-visible) { outline: none; }
+
+    /* Respetar la preferencia de menos movimiento */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
 
   <!-- Data -->
-  <script src="components/data.js?v=17"></script>
+  <script src="components/data.js?v=18"></script>
 
   <!-- Components (Babel JSX) -->
   <script type="text/babel" src="components/Navbar.jsx?v=12"></script>
   <script type="text/babel" src="components/HeroSection.jsx?v=8"></script>
-  <script type="text/babel" src="components/AboutSection.jsx?v=4"></script>
+  <script type="text/babel" src="components/AboutSection.jsx?v=5"></script>
   <script type="text/babel" src="components/InfoSections.jsx?v=2"></script>
-  <script type="text/babel" src="components/CotizadorModal.jsx?v=22"></script>
+  <script type="text/babel" src="components/CotizadorModal.jsx?v=23"></script>
   <script type="text/babel" src="components/InfoModal.jsx?v=2"></script>
-  <script type="text/babel" src="components/Footer.jsx?v=5"></script>
-  <script type="text/babel" src="components/GuideTour.jsx?v=4"></script>
+  <script type="text/babel" src="components/Footer.jsx?v=6"></script>
+  <script type="text/babel" src="components/GuideTour.jsx?v=5"></script>
 
   <!-- App -->
   <script type="text/babel" src="App.jsx?v=7"></script>
