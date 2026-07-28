@@ -75,7 +75,7 @@ function HeroVideoSection({ onCotizarClick }) {
           <p style={{
             fontFamily: "'Figtree', sans-serif",
             fontSize: isMobile ? '15px' : '18px', fontWeight: 400,
-            color: 'rgba(245,240,230,0.75)',
+            color: 'rgba(255,255,255,0.92)',
             letterSpacing: '0.01em',
             maxWidth: '540px', lineHeight: 1.55,
             marginBottom: isMobile ? '30px' : '38px',
