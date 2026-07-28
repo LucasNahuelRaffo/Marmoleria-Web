@@ -44,19 +44,19 @@ const COT_TOUR_STEPS = [
 
 /* ── Componentes auxiliares (nivel módulo, sin remount) ─────────────────── */
 
-function SubTabs({ tabs, active, onChange }) {
+function SubTabs({ tabs, active, onChange, isMobile }) {
   return (
-    <div style={{ display: 'flex', gap: '4px', padding: '10px 14px 0', flexWrap: 'wrap' }}>
+    <div style={{ display: 'flex', gap: isMobile ? '6px' : '4px', padding: isMobile ? '12px 14px 0' : '10px 14px 0', flexWrap: 'wrap' }}>
       {tabs.map(t => {
         const isA = active === t.key;
         return (
           <button key={t.key} onClick={() => onChange(t.key)} style={{
-            background: isA ? 'rgba(212,175,55,0.14)' : 'rgba(255,255,255,0.04)',
-            border: `1px solid ${isA ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.06)'}`,
-            borderRadius: '50px', color: isA ? '#D4AF37' : 'rgba(245,240,230,0.4)',
-            padding: '5px 12px', cursor: 'pointer',
-            fontFamily: "'Figtree', sans-serif", fontSize: '10px',
-            fontWeight: isA ? 700 : 400, letterSpacing: '0.06em', transition: 'all 0.15s',
+            background: isA ? 'rgba(212,175,55,0.14)' : 'rgba(255,255,255,0.06)',
+            border: `1px solid ${isA ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.12)'}`,
+            borderRadius: '50px', color: isA ? '#D4AF37' : 'rgba(245,240,230,0.75)',
+            padding: isMobile ? '7px 15px' : '5px 12px', cursor: 'pointer',
+            fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '12px' : '10px',
+            fontWeight: isA ? 700 : 500, letterSpacing: '0.06em', transition: 'all 0.15s',
           }}>{t.label}</button>
         );
       })}
@@ -65,9 +65,13 @@ function SubTabs({ tabs, active, onChange }) {
 }
 
 function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
-  const sz = isMobile ? '50px' : '56px';
+  const sz = isMobile ? '62px' : '56px';
   return (
-    <div data-guide="cot-swatches" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(64px, 1fr))', gap: '10px', padding: '14px' }}>
+    <div data-guide="cot-swatches" style={{
+      display: 'grid',
+      gridTemplateColumns: isMobile ? 'repeat(auto-fill, minmax(76px, 1fr))' : 'repeat(auto-fill, minmax(64px, 1fr))',
+      gap: isMobile ? '14px' : '10px', padding: '14px',
+    }}>
       {items.map(item => {
         const isSel = selectedIds.includes(item.id);
         const isActive = activeId === item.id;
@@ -75,10 +79,10 @@ function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
           <div key={item.id}
             onClick={() => onPick(item)}
             style={{ cursor: 'pointer', textAlign: 'center' }}>
-            <div style={{ width: sz, height: sz, margin: '0 auto 5px', position: 'relative' }}>
+            <div style={{ width: sz, height: sz, margin: '0 auto 6px', position: 'relative' }}>
               <div style={{
                 width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden',
-                border: `${isActive ? '2.5px' : '2px'} solid ${isActive ? '#D4AF37' : isSel ? 'rgba(212,175,55,0.55)' : 'rgba(255,255,255,0.08)'}`,
+                border: `${isActive ? '2.5px' : '2px'} solid ${isActive ? '#D4AF37' : isSel ? 'rgba(212,175,55,0.55)' : 'rgba(255,255,255,0.14)'}`,
                 transform: isActive ? 'scale(1.1)' : 'scale(1)',
                 boxShadow: isActive ? '0 0 0 3px rgba(212,175,55,0.2)' : 'none',
                 transition: 'all 0.18s',
@@ -88,7 +92,7 @@ function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
               </div>
               {isSel && (
                 <div style={{
-                  position: 'absolute', bottom: '-4px', right: '-4px', width: '18px', height: '18px',
+                  position: 'absolute', bottom: '-4px', right: '-4px', width: isMobile ? '20px' : '18px', height: isMobile ? '20px' : '18px',
                   borderRadius: '50%', background: '#D4AF37', border: '2px solid #0F0F13',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '9px', color: '#0B0B0F', fontWeight: 700, lineHeight: 1, zIndex: 1,
@@ -96,8 +100,8 @@ function SwatchGrid({ items, selectedIds, activeId, onPick, isMobile }) {
               )}
             </div>
             <p style={{
-              fontFamily: "'Figtree', sans-serif", fontSize: '9px', lineHeight: 1.3,
-              color: isSel ? '#D4AF37' : 'rgba(245,240,230,0.4)', fontWeight: isSel ? 700 : 400,
+              fontFamily: "'Figtree', sans-serif", fontSize: isMobile ? '11.5px' : '9px', lineHeight: 1.3,
+              color: isSel ? '#D4AF37' : 'rgba(245,240,230,0.78)', fontWeight: isSel ? 700 : 500,
             }}>{item.name}</p>
           </div>
         );
@@ -585,7 +589,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   {slotHeader('surf', '◈', 'Superficie', surface.map(s => s.item))}
                   {openSlot === 'surf' && (
                     <div>
-                      <SubTabs tabs={SURF_TABS} active={surfTab} onChange={setSurfTab} />
+                      <SubTabs tabs={SURF_TABS} active={surfTab} onChange={setSurfTab} isMobile={isMobile} />
                       <SwatchGrid
                         items={surfItems} selectedIds={surface.map(s => s.item.id)} activeId={activeSurfaceEntry?.item.id}
                         onPick={pickSurf} isMobile={isMobile}
@@ -597,7 +601,7 @@ function CotizadorModal({ context = 'all', onClose }) {
                   {slotHeader('mueble', '▣', 'Muebles', mueble)}
                   {openSlot === 'mueble' && (
                     <div>
-                      {MBL_TABS.length > 1 && <SubTabs tabs={MBL_TABS} active={mblTab} onChange={setMblTab} />}
+                      {MBL_TABS.length > 1 && <SubTabs tabs={MBL_TABS} active={mblTab} onChange={setMblTab} isMobile={isMobile} />}
                       <SwatchGrid items={mblItems} selectedIds={mueble.map(m => m.id)} activeId={activeMueble?.id} onPick={toggleMueble} isMobile={isMobile} />
                     </div>
                   )}
