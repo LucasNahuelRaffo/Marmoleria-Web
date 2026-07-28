@@ -1,14 +1,56 @@
-const { useState, useEffect } = React;
+const { useState, useEffect, useRef } = React;
+
+const HERO_QUESTIONS = [
+  { pre: '¿Listo para ', bold: 'transformar tu obra', post: '?' },
+  { pre: '¿Soñás con una ', bold: 'cocina a medida', post: '?' },
+  { pre: '¿Buscás calidad premium ', bold: 'sin intermediarios', post: '?' },
+  { pre: '¿Tu obra necesita ', bold: 'un solo proveedor', post: '?' },
+];
 
 function HeroVideoSection({ onCotizarClick }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [hoveredCta, setHoveredCta] = useState(false);
   const [hoveredWa, setHoveredWa] = useState(false);
+  const [qIndex, setQIndex] = useState(0);
+  const [qVisible, setQVisible] = useState(true);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Rotación del titular: fundido de salida, cambio de pregunta, fundido de entrada.
+  // Se salta el trabajo si la pestaña está oculta (nadie la ve, no vale la pena animarla).
+  useEffect(() => {
+    let fadeTimeout;
+    const interval = setInterval(() => {
+      if (document.hidden) return;
+      setQVisible(false);
+      fadeTimeout = setTimeout(() => {
+        setQIndex(i => (i + 1) % HERO_QUESTIONS.length);
+        setQVisible(true);
+      }, 500);
+    }, 5000);
+    return () => { clearInterval(interval); clearTimeout(fadeTimeout); };
+  }, []);
+
+  // El video nunca debe quedar pausado: los navegadores mobile lo pausan solo al
+  // minimizar la app / bloquear pantalla, y no lo reanudan solos al volver.
+  useEffect(() => {
+    const resume = () => {
+      const v = videoRef.current;
+      if (v && v.paused) v.play().catch(() => {});
+    };
+    document.addEventListener('visibilitychange', resume);
+    window.addEventListener('pageshow', resume);
+    window.addEventListener('focus', resume);
+    return () => {
+      document.removeEventListener('visibilitychange', resume);
+      window.removeEventListener('pageshow', resume);
+      window.removeEventListener('focus', resume);
+    };
   }, []);
 
   return (
@@ -20,8 +62,10 @@ function HeroVideoSection({ onCotizarClick }) {
     }}>
       {/* Video de fondo */}
       <video
-        autoPlay muted loop playsInline preload="auto"
-        poster="images/hero-bg.png"
+        ref={videoRef}
+        autoPlay muted loop playsInline webkit-playsinline="true" preload="auto"
+        poster="images/hero-bg.webp"
+        onPause={(e) => { e.currentTarget.play().catch(() => {}); }}
         style={{
           position: 'absolute', inset: 0,
           width: '100%', height: '100%',
@@ -69,7 +113,16 @@ function HeroVideoSection({ onCotizarClick }) {
             maxWidth: '920px',
             textShadow: '0 2px 40px rgba(0,0,0,0.5)',
           }}>
-            ¿Listo para <span style={{ fontWeight: 700 }}>transformar tu obra</span>?
+            <span style={{
+              display: 'inline-block',
+              opacity: qVisible ? 1 : 0,
+              transform: qVisible ? 'translateY(0)' : 'translateY(10px)',
+              transition: 'opacity 0.5s ease, transform 0.5s ease',
+            }}>
+              {HERO_QUESTIONS[qIndex].pre}
+              <span style={{ fontWeight: 700 }}>{HERO_QUESTIONS[qIndex].bold}</span>
+              {HERO_QUESTIONS[qIndex].post}
+            </span>
           </h1>
 
           <p style={{

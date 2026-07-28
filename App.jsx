@@ -169,18 +169,13 @@ function PersonalizaTodo({ onCotizarClick }) {
 function App() {
   const [cotizadorOpen, setCotizadorOpen] = useState(false);
   const [cotizadorContext, setCotizadorContext] = useState('all');
-  const [infoSection, setInfoSection] = useState(null);
 
   const openCotizador = (context = 'all') => {
-    setInfoSection(null);
     setCotizadorContext(context || 'all');
     setCotizadorOpen(true);
   };
 
   const closeCotizador = () => setCotizadorOpen(false);
-
-  const openInfo = (section) => setInfoSection(section);
-  const closeInfo = () => setInfoSection(null);
 
   const handleVerMas = (sectionId) => {
     const el = document.getElementById(sectionId);
@@ -190,9 +185,7 @@ function App() {
     }
   };
 
-  // Lock scroll cuando el cotizador está abierto. InfoModal maneja su propio
-  // lock (en mobile necesita que la página pueda scrollear de verdad, ver
-  // components/InfoModal.jsx).
+  // Lock scroll cuando el cotizador está abierto.
   useEffect(() => {
     if (cotizadorOpen) {
       document.body.style.overflow = 'hidden';
@@ -218,13 +211,8 @@ function App() {
         context: cotizadorContext,
         onClose: closeCotizador,
       }),
-      infoSection && React.createElement(InfoModal, {
-        section: infoSection,
-        onClose: closeInfo,
-        onCotizar: openCotizador,
-      }),
       React.createElement(WhatsAppButton, null),
-      React.createElement(GuideTour, { hidden: cotizadorOpen || !!infoSection })
+      React.createElement(GuideTour, { hidden: cotizadorOpen })
     )
   );
 }
