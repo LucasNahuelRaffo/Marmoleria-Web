@@ -1,4 +1,4 @@
-const { useState, useEffect, useRef } = React;
+const { useState, useEffect, useRef, useCallback } = React;
 
 const HERO_QUESTIONS = [
   { pre: '¿Listo para ', bold: 'transformar tu obra', post: '?' },
@@ -36,22 +36,38 @@ function HeroVideoSection({ onCotizarClick }) {
     return () => { clearInterval(interval); clearTimeout(fadeTimeout); };
   }, []);
 
-  // El video nunca debe quedar pausado: los navegadores mobile lo pausan solo al
-  // minimizar la app / bloquear pantalla, y no lo reanudan solos al volver.
+  // El video nunca debe quedar pausado: iOS/Android lo pausan (y a veces le vacían
+  // el buffer) al pasar a otra app o bloquear pantalla, y no lo reanudan solos al
+  // volver. Forzamos play() en todas las señales de "volví" posibles, recargando
+  // primero si el buffer quedó vacío, con un reintento corto por si el primer
+  // intento llega demasiado pronto (iOS necesita un instante tras volver).
+  const retryTimerRef = useRef(null);
+  const resumeVideo = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    clearTimeout(retryTimerRef.current);
+    v.muted = true;
+    if (v.readyState < 2) v.load();
+    const attempt = () => v.play().catch(() => {
+      retryTimerRef.current = setTimeout(() => v.play().catch(() => {}), 350);
+    });
+    attempt();
+  }, []);
+
   useEffect(() => {
-    const resume = () => {
-      const v = videoRef.current;
-      if (v && v.paused) v.play().catch(() => {});
-    };
+    const resume = resumeVideo;
     document.addEventListener('visibilitychange', resume);
     window.addEventListener('pageshow', resume);
     window.addEventListener('focus', resume);
+    window.addEventListener('pagehide', resume);
     return () => {
+      clearTimeout(retryTimerRef.current);
       document.removeEventListener('visibilitychange', resume);
       window.removeEventListener('pageshow', resume);
       window.removeEventListener('focus', resume);
+      window.removeEventListener('pagehide', resume);
     };
-  }, []);
+  }, [resumeVideo]);
 
   return (
     <section id="hero" style={{
@@ -65,7 +81,7 @@ function HeroVideoSection({ onCotizarClick }) {
         ref={videoRef}
         autoPlay muted loop playsInline webkit-playsinline="true" preload="auto"
         poster="images/hero-bg.webp"
-        onPause={(e) => { e.currentTarget.play().catch(() => {}); }}
+        onPause={resumeVideo}
         style={{
           position: 'absolute', inset: 0,
           width: '100%', height: '100%',
