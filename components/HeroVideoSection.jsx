@@ -38,34 +38,31 @@ function HeroVideoSection({ onCotizarClick }) {
 
   // El video nunca debe quedar pausado: iOS/Android lo pausan (y a veces le vacían
   // el buffer) al pasar a otra app o bloquear pantalla, y no lo reanudan solos al
-  // volver. Forzamos play() en todas las señales de "volví" posibles, recargando
-  // primero si el buffer quedó vacío, con un reintento corto por si el primer
-  // intento llega demasiado pronto (iOS necesita un instante tras volver).
+  // volver. Ojo: si ya está reproduciéndose no tocamos nada (evita interrumpir el
+  // autoplay normal de la carga inicial); load() solo se usa como último recurso,
+  // si play() falla y no hay ni un frame cargado.
   const retryTimerRef = useRef(null);
   const resumeVideo = useCallback(() => {
     const v = videoRef.current;
-    if (!v) return;
+    if (!v || !v.paused) return;
     clearTimeout(retryTimerRef.current);
-    v.muted = true;
-    if (v.readyState < 2) v.load();
-    const attempt = () => v.play().catch(() => {
+    const tryPlay = () => v.play().catch(() => {
+      if (v.readyState === 0) v.load();
       retryTimerRef.current = setTimeout(() => v.play().catch(() => {}), 350);
     });
-    attempt();
+    tryPlay();
   }, []);
 
   useEffect(() => {
-    const resume = resumeVideo;
-    document.addEventListener('visibilitychange', resume);
-    window.addEventListener('pageshow', resume);
-    window.addEventListener('focus', resume);
-    window.addEventListener('pagehide', resume);
+    const onPageShow = (e) => { if (e.persisted) resumeVideo(); };
+    document.addEventListener('visibilitychange', resumeVideo);
+    window.addEventListener('pageshow', onPageShow);
+    window.addEventListener('focus', resumeVideo);
     return () => {
       clearTimeout(retryTimerRef.current);
-      document.removeEventListener('visibilitychange', resume);
-      window.removeEventListener('pageshow', resume);
-      window.removeEventListener('focus', resume);
-      window.removeEventListener('pagehide', resume);
+      document.removeEventListener('visibilitychange', resumeVideo);
+      window.removeEventListener('pageshow', onPageShow);
+      window.removeEventListener('focus', resumeVideo);
     };
   }, [resumeVideo]);
 
