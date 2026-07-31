@@ -8,9 +8,9 @@ const HERO_QUESTIONS = [
   { full: '¿Empezamos con tu obra?', bold: 'tu obra' },
 ];
 
-// El ciclo completo (recorrer las 5 preguntas hasta llegar a la última) dura ~10s.
-const HERO_ROTATE_MS = 2400;
-const HERO_FADE_MS = 400;
+// Cada pregunta queda visible 10s antes de pasar a la siguiente.
+const HERO_ROTATE_MS = 10000;
+const HERO_FADE_MS = 500;
 
 // Devuelve los nodos del titular con el tramo `bold` resaltado.
 function renderHeroQuestion(q) {
