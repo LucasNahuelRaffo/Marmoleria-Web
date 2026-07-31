@@ -193,7 +193,7 @@ function Footer({ onCotizarClick }) {
           }}>Empresa</h4>
           {[
             'Inicio',
-            { label: 'Sobre Nosotros', href: 'documentos/sobre-nosotros.pdf', download: true },
+            { label: 'Sobre Nosotros', href: 'documentos/Home_Connect_Acerca_de_Nosotros_Ampliado.pdf', download: true },
             'Proyectos',
             'Contacto',
           ].map(linkBtn)}
