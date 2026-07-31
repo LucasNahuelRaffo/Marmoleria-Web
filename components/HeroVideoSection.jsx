@@ -101,7 +101,7 @@ function HeroVideoSection({ onCotizarClick }) {
           objectFit: 'cover', objectPosition: 'center',
         }}
       >
-        <source src="images/videos/Luxury_marble_website_hero_video_202607272226.mp4" type="video/mp4" />
+        <source src="images/videos/Home_interior_elegant_details_gold_202607312159.mp4" type="video/mp4" />
       </video>
 
       {/* Overlays para legibilidad del texto */}
