@@ -1,11 +1,27 @@
 const { useState, useEffect, useRef, useCallback } = React;
 
 const HERO_QUESTIONS = [
-  { pre: '¿Listo para ', bold: 'transformar tu obra', post: '?' },
-  { pre: '¿Soñás con una ', bold: 'cocina a medida', post: '?' },
-  { pre: '¿Buscás calidad premium ', bold: 'sin intermediarios', post: '?' },
-  { pre: '¿Tu obra necesita ', bold: 'un solo proveedor', post: '?' },
+  { full: '¿Y si supieras ahora mismo cuánto te va a costar tu obra?', bold: 'cuánto te va a costar tu obra' },
+  { full: '¿Tienes dudas sobre qué material elegir? Hablemos ahora.', bold: 'Hablemos ahora.' },
+  { full: '¿Ya sabes qué necesitas? Encuéntralo en 2 minutos.', bold: 'Encuéntralo en 2 minutos.' },
+  { full: '¿Tu próximo proyecto ya tiene proveedor confirmado?', bold: 'proveedor confirmado' },
+  { full: '¿Empezamos con tu obra?', bold: 'tu obra' },
 ];
+
+// El ciclo completo (recorrer las 5 preguntas hasta llegar a la última) dura ~10s.
+const HERO_ROTATE_MS = 2400;
+const HERO_FADE_MS = 400;
+
+// Devuelve los nodos del titular con el tramo `bold` resaltado.
+function renderHeroQuestion(q) {
+  const i = q.full.indexOf(q.bold);
+  if (i === -1) return q.full;
+  return [
+    q.full.slice(0, i),
+    React.createElement('span', { key: 'b', style: { fontWeight: 700 } }, q.bold),
+    q.full.slice(i + q.bold.length),
+  ];
+}
 
 function HeroVideoSection({ onCotizarClick }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -31,8 +47,8 @@ function HeroVideoSection({ onCotizarClick }) {
       fadeTimeout = setTimeout(() => {
         setQIndex(i => (i + 1) % HERO_QUESTIONS.length);
         setQVisible(true);
-      }, 500);
-    }, 5000);
+      }, HERO_FADE_MS);
+    }, HERO_ROTATE_MS);
     return () => { clearInterval(interval); clearTimeout(fadeTimeout); };
   }, []);
 
@@ -130,11 +146,9 @@ function HeroVideoSection({ onCotizarClick }) {
               display: 'inline-block',
               opacity: qVisible ? 1 : 0,
               transform: qVisible ? 'translateY(0)' : 'translateY(10px)',
-              transition: 'opacity 0.5s ease, transform 0.5s ease',
+              transition: `opacity ${HERO_FADE_MS}ms ease, transform ${HERO_FADE_MS}ms ease`,
             }}>
-              {HERO_QUESTIONS[qIndex].pre}
-              <span style={{ fontWeight: 700 }}>{HERO_QUESTIONS[qIndex].bold}</span>
-              {HERO_QUESTIONS[qIndex].post}
+              {renderHeroQuestion(HERO_QUESTIONS[qIndex])}
             </span>
           </h1>
 
